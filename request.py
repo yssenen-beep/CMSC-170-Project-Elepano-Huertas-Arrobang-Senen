@@ -1,10 +1,10 @@
 import requests
 
-url = "https://api-amis.uplb.edu.ph/api/students/classes?page=1&items=5&status=Active&by_term_type=true&term_id=1252&course_code_like=--&section_like=--&class_status=--"
+url = "https://api-amis.uplb.edu.ph/api/students/classes"
 
 headers = {
-    "Authorization": "Bearer 12312482|wTvHxdANN8ZYCebWdSuzxXDAjKDgQrEJfQmEMHjU",
-    "x-session-id": "587fc47d-6bda-4374-97c6-6c050530f151",
+    "Authorization": "AUTH Token here",
+    "x-session-id": "session id here",
     "Accept": "application/json",
 }
 
