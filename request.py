@@ -3,17 +3,17 @@ import requests
 url = "https://api-amis.uplb.edu.ph/api/students/classes"
 
 headers = {
-    "Authorization": "AUTH Token here",
+    "Authorization": "auth token here",
     "x-session-id": "session id here",
     "Accept": "application/json",
 }
 
 params = {
     "page": 1,
-    "items": 12458,
+    "items": 6129,
     "status": "Active",
     "by_term_type": "true",
-    "term_id": 1261,
+    "term_id": 1253,
     "course_code_like": "--",
     "section_like": "--",
     "class_status": "--",
@@ -26,7 +26,7 @@ response = requests.get(
     timeout=30,
 )
 
-with open("classes_second_sem.json", "w", encoding="utf-8") as file:
+with open("classes_midyear_sem.json", "w", encoding="utf-8") as file:
     file.write(response.text)
 
 print("Saved to classes.json")
