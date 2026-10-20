@@ -1,22 +1,20 @@
 import requests
 
-url = "https://api-amis.uplb.edu.ph/api/students/classes"
+url = "https://api-amis.uplb.edu.ph/api/curriculums"
 
 headers = {
-    "Authorization": "auth token here",
-    "x-session-id": "session id here",
+    "Authorization": "",
+    "x-session-id": "",
     "Accept": "application/json",
 }
 
 params = {
     "page": 1,
-    "items": 6129,
-    "status": "Active",
-    "by_term_type": "true",
-    "term_id": 1253,
-    "course_code_like": "--",
-    "section_like": "--",
-    "class_status": "--",
+    "items": 174,
+    "w_curriculum_details": "true",
+    "curriculum_details": "true",
+    "code_like": "--",
+    "name_like": "--",
 }
 
 response = requests.get(
