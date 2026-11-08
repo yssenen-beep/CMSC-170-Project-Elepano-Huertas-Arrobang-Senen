@@ -13,6 +13,8 @@ SEMESTER_FILES = {
 }
 SEMESTER_NAMES = {1: "1st Semester", 2: "2nd Semester"}
 SEARCH_NODE_LIMIT = 100_000
+MAX_ACADEMIC_UNITS = 21
+MAX_NON_ACADEMIC_UNITS = 5
 
 DAY_ALIASES = {
     "m": "M", "mon": "M", "monday": "M",
@@ -245,6 +247,52 @@ def option_fits(option, selected):
     return True
 
 
+def is_non_academic_course(course):
+    # HK and NSTP units have a separate limit from academic course units.
+    parts = normalize(course.get("course_code")).split(maxsplit=1)
+    prefix = parts[0] if parts else ""
+    return prefix in {"HK", "NSTP"}
+
+
+def get_course_units(course, option):
+    # Prefer the section's units, falling back to the curriculum when absent.
+    if option["units"] is not None:
+        return option["units"]
+    return course["units"]
+
+
+def unit_totals(selected):
+    academic = 0.0
+    non_academic = 0.0
+    for course, option in selected:
+        units = get_course_units(course, option)
+        if units is None:
+            continue
+        if is_non_academic_course(course):
+            non_academic += units
+        else:
+            academic += units
+    return academic, non_academic
+
+
+def option_within_unit_limits(
+    course, option, selected,
+    max_academic_units=MAX_ACADEMIC_UNITS,
+    max_non_academic_units=MAX_NON_ACADEMIC_UNITS,
+):
+    academic, non_academic = unit_totals(selected)
+    units = get_course_units(course, option)
+    if units is not None:
+        if is_non_academic_course(course):
+            non_academic += units
+        else:
+            academic += units
+    return (
+        academic <= max_academic_units
+        and non_academic <= max_non_academic_units
+    )
+
+
 def score_schedule(selected, preferences):
     # Score availability and gap fit as the mean of measurable preferences.
     all_meetings = []
@@ -299,8 +347,17 @@ def score_schedule(selected, preferences):
     return {"components": components, "overall": overall}
 
 
-def search_schedule(courses, offerings, preferences):
+def search_schedule(
+    courses, offerings, preferences,
+    max_academic_units=MAX_ACADEMIC_UNITS,
+    max_non_academic_units=MAX_NON_ACADEMIC_UNITS,
+):
     # Use recursive backtracking to find the best schedule within a node budget.
+    if max_academic_units is None:
+        max_academic_units = MAX_ACADEMIC_UNITS
+    if max_non_academic_units is None:
+        max_non_academic_units = MAX_NON_ACADEMIC_UNITS
+
     ordered_courses = sorted(
         courses,
         key=lambda course: len(offerings[normalize(course["course_code"])]),
@@ -344,7 +401,13 @@ def search_schedule(courses, offerings, preferences):
         candidates = []
 
         for option in course_options:
-            if not option_fits(option, selected):
+            if (
+                not option_fits(option, selected)
+                or not option_within_unit_limits(
+                    course, option, selected,
+                    max_academic_units, max_non_academic_units,
+                )
+            ):
                 continue
             trial = selected + [(course, option)]
             partial_score = score_schedule(trial, preferences)["overall"]
@@ -398,14 +461,19 @@ def print_schedule(program, specialization, year, semester, courses, selected, s
 
     headers = ("Course", "Section", "Type", "Units", "Meeting times")
     table = []
-    total_units = 0.0
+    academic_units = 0.0
+    non_academic_units = 0.0
+    unknown_unit_courses = 0
     for course in courses:
         option = chosen_by_course[normalize(course["course_code"])]
-        units = option["units"]
+        units = get_course_units(course, option)
         if units is None:
-            units = course["units"]
-        if units is not None:
-            total_units += units
+            unknown_unit_courses += 1
+        else:
+            if is_non_academic_course(course):
+                non_academic_units += units
+            else:
+                academic_units += units
         table.append((
             course["course_code"],
             option["section"] or "(unlabeled)",
@@ -424,7 +492,13 @@ def print_schedule(program, specialization, year, semester, courses, selected, s
     for row in table:
         print("  ".join(row[index].ljust(widths[index]) for index in range(len(headers))))
     print(f"\nCourses scheduled: {len(table)} / {len(courses)}")
-    print(f"Total units: {format_units(total_units)}")
+    print(f"Academic units: {format_units(academic_units)} / {MAX_ACADEMIC_UNITS}")
+    print(
+        "Non-academic units (HK/NSTP): "
+        f"{format_units(non_academic_units)} / {MAX_NON_ACADEMIC_UNITS}"
+    )
+    if unknown_unit_courses:
+        print(f"Units missing from data for {unknown_unit_courses} course(s).")
 
 
 def main():
@@ -547,7 +621,11 @@ def main():
                 "search limit."
             )
         else:
-            print("\nNo conflict-free schedule exists in the current filtered offerings.")
+            print(
+                "\nNo schedule meets the time-conflict and unit limits "
+                f"({MAX_ACADEMIC_UNITS} academic, "
+                f"{MAX_NON_ACADEMIC_UNITS} non-academic units) in the current offerings."
+            )
         return 1
 
     if limit_reached:
