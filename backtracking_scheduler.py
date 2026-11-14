@@ -29,7 +29,9 @@ DAY_ORDER = {"M": 0, "T": 1, "W": 2, "Th": 3, "F": 4, "S": 5, "Su": 6}
 TIME_SLOT_RE = re.compile(
     r"^\s*(.*?)\s+(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$"
 )
-TIME_RANGE_RE = re.compile(r"^\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$")
+BLOCKED_PERIOD_RE = re.compile(
+    r"^\s*(?:(.*?)\s+)?(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$"
+)
 
 
 def normalize(value):
@@ -72,6 +74,27 @@ def parse_day_list(value):
             raise ValueError("Use comma-separated days such as M,T,Th,F.")
         days.add(day)
     return days
+
+
+def parse_blocked_periods(value):
+    # Parse periods such as 'M,T 08:00-10:00; W 13:00-15:00'.
+    periods = []
+    for raw_period in value.split(";"):
+        match = BLOCKED_PERIOD_RE.fullmatch(raw_period)
+        if not match:
+            raise ValueError(
+                "Use 'M,T 08:00-10:00' for selected days, or "
+                "'08:00-10:00' to block that time every day."
+            )
+
+        raw_days = (match.group(1) or "").strip()
+        days = parse_day_list(raw_days) if raw_days else None
+        start, end = parse_clock(match.group(2)), parse_clock(match.group(3))
+        if start is None or end is None or end <= start:
+            raise ValueError("Each blocked time range must be valid and end after it starts.")
+        periods.append({"days": days, "window": (start, end)})
+
+    return periods
 
 
 def parse_time_slot(value):
@@ -182,39 +205,26 @@ def load_offerings(path):
 
 
 def ask_preferences():
-    print("\nOptional preferences (these affect scoring, not eligibility).")
-    print("Press Enter to skip a preference.")
+    print("\nSet optional soft preferences for blocked times and class gaps.")
+    print("The search may use a blocked time if that leads to a valid schedule.")
 
-    preferred_days = None
+    blocked_periods = []
     while True:
-        raw_days = input("Preferred class days, e.g. M,T,Th (blank for any): ").strip()
-        if not raw_days:
+        raw_periods = input(
+            "Blocked times, e.g. M,T 08:00-10:00; W,F 13:00-15:00 "
+            "(blank to skip): "
+        ).strip()
+        if not raw_periods:
             break
         try:
-            preferred_days = parse_day_list(raw_days)
+            blocked_periods = parse_blocked_periods(raw_periods)
             break
         except ValueError as error:
             print(error)
 
-    preferred_window = None
-    while True:
-        raw_window = input("Preferred time range, e.g. 08:00-13:00 (blank for any): ").strip()
-        if not raw_window:
-            break
-        match = TIME_RANGE_RE.fullmatch(raw_window)
-        if not match:
-            print("Use a time range such as 08:00-13:00.")
-            continue
-        start, end = parse_clock(match.group(1)), parse_clock(match.group(2))
-        if start is None or end is None or end <= start:
-            print("Enter a valid range whose end is after its start.")
-            continue
-        preferred_window = (start, end)
-        break
-
     preferred_gap = None
     while True:
-        raw_gap = input("Preferred gap between classes in minutes (blank to skip): ").strip()
+        raw_gap = input("Target gap between classes in minutes (blank to skip): ").strip()
         if not raw_gap:
             break
         try:
@@ -226,8 +236,7 @@ def ask_preferences():
             print("Enter a non-negative whole number of minutes.")
 
     return {
-        "days": preferred_days,
-        "window": preferred_window,
+        "blocked_periods": blocked_periods,
         "gap": preferred_gap,
     }
 
@@ -245,6 +254,33 @@ def option_fits(option, selected):
         if meetings_conflict(option["meetings"], chosen["meetings"]):
             return False
     return True
+
+
+def blocked_minutes_for_meeting(day, start, end, blocked_periods):
+    # Merge matching block overlaps so overlapping blocks are not double-counted.
+    overlaps = []
+    for period in blocked_periods:
+        if period["days"] is not None and day not in period["days"]:
+            continue
+        block_start, block_end = period["window"]
+        overlap_start = max(start, block_start)
+        overlap_end = min(end, block_end)
+        if overlap_start < overlap_end:
+            overlaps.append((overlap_start, overlap_end))
+
+    overlaps.sort()
+    if not overlaps:
+        return 0
+
+    total = 0
+    merged_start, merged_end = overlaps[0]
+    for overlap_start, overlap_end in overlaps[1:]:
+        if overlap_start <= merged_end:
+            merged_end = max(merged_end, overlap_end)
+        else:
+            total += merged_end - merged_start
+            merged_start, merged_end = overlap_start, overlap_end
+    return total + merged_end - merged_start
 
 
 def is_non_academic_course(course):
@@ -294,31 +330,23 @@ def option_within_unit_limits(
 
 
 def score_schedule(selected, preferences):
-    # Score availability and gap fit as the mean of measurable preferences.
+    # Score soft preferences; hard constraints are checked during search.
     all_meetings = []
     for _, option in selected:
         all_meetings.extend(option["meetings"])
 
     components = {}
 
-    if preferences["days"] is not None or preferences["window"] is not None:
-        total_minutes = 0
-        preferred_minutes = 0
-        for day, start, end in all_meetings:
-            duration = end - start
-            total_minutes += duration
-
-            if preferences["days"] is not None and day not in preferences["days"]:
-                continue
-
-            if preferences["window"] is None:
-                preferred_minutes += duration
-            else:
-                window_start, window_end = preferences["window"]
-                preferred_minutes += max(0, min(end, window_end) - max(start, window_start))
-
+    if preferences["blocked_periods"]:
+        total_minutes = sum(end - start for _, start, end in all_meetings)
+        blocked_minutes = sum(
+            blocked_minutes_for_meeting(day, start, end, preferences["blocked_periods"])
+            for day, start, end in all_meetings
+        )
         if total_minutes:
-            components["availability"] = 100.0 * preferred_minutes / total_minutes
+            components["blocked_time"] = (
+                100.0 * (total_minutes - blocked_minutes) / total_minutes
+            )
 
     if preferences["gap"] is not None:
         by_day = {}
@@ -368,11 +396,7 @@ def search_schedule(
     expanded_nodes = 0
     limit_reached = False
     stop_search = False
-    any_preference = (
-        preferences["days"] is not None
-        or preferences["window"] is not None
-        or preferences["gap"] is not None
-    )
+    any_preference = bool(preferences["blocked_periods"]) or preferences["gap"] is not None
 
     def backtrack(index, selected):
         nonlocal best_schedule, best_score, expanded_nodes, limit_reached, stop_search
@@ -392,7 +416,7 @@ def search_schedule(
                 best_score = comparable_score
                 best_schedule = list(selected)
 
-            if not any_preference or comparable_score >= 100.0:
+            if not any_preference or score is None or comparable_score >= 100.0:
                 stop_search = True
             return
 
@@ -450,14 +474,12 @@ def print_schedule(program, specialization, year, semester, courses, selected, s
     print(f"Development program / specialization: {specialization}")
     print(f"Year: {year}")
     print(f"Semester: {SEMESTER_NAMES[semester]}")
-    print(f"Preference score: {format_score(score)}")
 
-    if preferences["days"] is not None or preferences["window"] is not None:
-        availability = score_schedule(selected, preferences)["components"].get("availability")
-        print(f"  Availability fit: {format_score(availability)}")
+    if preferences["blocked_periods"]:
+        blocked_time = score_schedule(selected, preferences)["components"].get("blocked_time")
+        print(f"  Blocked-time fit (time outside blocks): {format_score(blocked_time)}")
     if preferences["gap"] is not None:
-        gap = score_schedule(selected, preferences)["components"].get("gap")
-        print(f"  Gap fit (target {preferences['gap']} min): {format_score(gap)}")
+        print(f"  Gap preference (target {preferences['gap']} min): {format_score(score)}")
 
     headers = ("Course", "Section", "Type", "Units", "Meeting times")
     table = []
@@ -622,7 +644,7 @@ def main():
             )
         else:
             print(
-                "\nNo schedule meets the time-conflict and unit limits "
+                "\nNo schedule satisfies the time-conflict and unit constraints "
                 f"({MAX_ACADEMIC_UNITS} academic, "
                 f"{MAX_NON_ACADEMIC_UNITS} non-academic units) in the current offerings."
             )
@@ -633,10 +655,7 @@ def main():
             f"\nSearch reached its {SEARCH_NODE_LIMIT:,}-node limit after "
             f"{expanded_nodes:,} nodes; showing the best schedule found so far."
         )
-    elif any(
-        preferences[key] is not None
-        for key in ("days", "window", "gap")
-    ):
+    elif preferences["gap"] is not None or preferences["blocked_periods"]:
         print(f"\nSearch examined {expanded_nodes:,} nodes.")
 
     final_score = score_schedule(best, preferences)["overall"]
