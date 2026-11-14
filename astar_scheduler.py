@@ -1,29 +1,18 @@
 import csv
 import os
 import heapq
-from itertools import count
+from itertools import combinations, count
 
 BASE = "../filtered/"
 MAX_UNITS = 21
 MAXIMUM_NODES = 100000
-SLOT_MINUTES = 30
-DAY_START = 7 * 60  #7:00 am start
 UNIT_WEIGHT = 1.0   #penalty scale per unit under max limit
-DAY_CODES = {
-    "Monday": "M", "Tuesday": "T", "Wednesday": "W",
-    "Thursday": "Th", "Friday": "F", "Saturday": "S"
-}
-DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-TIME_SLOTS = [
-    "7-7:30 AM", "7:30-8 AM", "8-8:30 AM", "8:30-9 AM", "9-9:30 AM", "9:30-10 AM",
-    "10-10:30 AM", "10:30-11 AM", "11-11:30 AM", "11:30-12 PM", "12-12:30 PM", "12:30-1 PM",
-    "1-1:30 PM", "1:30-2 PM", "2-2:30 PM", "2:30-3 PM", "3-3:30 PM", "3:30-4 PM",
-    "4-4:30 PM", "4:30-5 PM", "5-5:30 PM", "5:30-6 PM", "6-6:30 PM", "6:30-7 PM"
-]
+HARD_CONSTRAINT_WEIGHT = 1000   
+SOFT_CONSTRAINT_WEIGHT = 0.01   #penalty per vacant minute
 
 def parse_timeslot(time_slot):
     #parse meeting time strings into a list of (day, start, end) tuples
-    if not time_slot or not time_slot.strip():
+    if not time_slot or not time_slot.strip(): 
         return []
 
     meetings = []
@@ -91,22 +80,6 @@ def to_minutes(time_str):
     h, m = map(int, time_str.split(":"))
     return h * 60 + m
 
-def get_blocked_slots(availability, time_slots):
-    #extract set of (day_code, slot_index) marked unavailable by the user
-    blocked = set()
-    for (day, label), is_free in (availability or {}).items():
-        if not is_free and label in time_slots:
-            blocked.add((DAY_CODES.get(day, day), time_slots.index(label)))
-    return blocked
-
-def touches_blocked_slot(section, blocked):
-    #check if any part of a section falls within a user-blocked slot
-    for day, start, end in section["mins"]:
-        for minute in range(start, end, SLOT_MINUTES):
-            if (day, (minute - DAY_START) // SLOT_MINUTES) in blocked:
-                return True
-    return False
-
 def has_conflict(a, b):
     #check for time overlap between two class sections
     for dayA, startA, endA in a["mins"]:
@@ -115,11 +88,8 @@ def has_conflict(a, b):
                 return True
     return False
 
-def gap_cost(sections, gap):
-    #calculate penalty for breaks shorter than the preferred gap
-    if not gap:
-        return 0.0
-
+def gap_cost(sections):
+    #calculate the total vacant minutes between classes in a day
     by_day = {}
     for s in sections:
         for day, start, end in s["mins"]:
@@ -128,13 +98,35 @@ def gap_cost(sections, gap):
     cost = 0.0
     for meetings in by_day.values():
         meetings.sort()
-        for (_, end), (start, _) in zip(meetings, meetings[1:]):
-            cost += max(0, gap * 60 - (start - end)) / SLOT_MINUTES
+        last_end = meetings[0][1]
+        for start, end in meetings[1:]:
+            cost += max(0, start - last_end)
+            last_end = max(last_end, end)
     return cost
 
-def setup_a_star_inputs(program, specialization, year, semester, availability, time_slots):
+def blocked_cost(sections):
+    #count each blocked time at most once if any class overlaps it
+    return len(set().union(*(s["blocked"] for s in sections)))
+
+def schedule_metrics(chosen, course_units, req_codes):
+    #counts conflicts, units, and missing required courses
+    conflicts = 0
+    for a, b in combinations(chosen, 2):
+        conflicts += has_conflict(a, b)
+
+    academic_units = sum(course_units.get(s["course_code"], 0) for s in chosen if not s["course_code"].startswith("HK "))
+    missing_required = len(req_codes - {s["course_code"] for s in chosen})
+    return conflicts, academic_units, missing_required
+
+def solve_fitness(chosen, course_units, req_codes):
+    #fitness function: higher is better, penalizes conflicts, excess units, missing required courses, vacant minutes, and blocked times
+    conflicts, academic_units, missing_required = schedule_metrics(chosen, course_units, req_codes)
+    excess_units = max(0, academic_units - MAX_UNITS)
+    return academic_units - HARD_CONSTRAINT_WEIGHT * (conflicts + excess_units + missing_required) - SOFT_CONSTRAINT_WEIGHT * gap_cost(chosen) - blocked_cost(chosen)
+
+def setup_a_star_inputs(program, specialization, year, semester, blocked_times):
     req, spec, elec, ge, schedules = handle_file(program, specialization, year, semester)
-    blocked = get_blocked_slots(availability, time_slots)
+    blocked = {(day, to_minutes(start), to_minutes(end)) for day, start, end in blocked_times}
 
     course_units = {}
     for c in req + spec + elec + ge:
@@ -145,9 +137,17 @@ def setup_a_star_inputs(program, specialization, year, semester, availability, t
 
     options = {}
     for section in schedules:
+        if not section["meetings"]:
+            continue    #sections with no time allotted are ignored
         section["mins"] = [(d, to_minutes(s), to_minutes(e)) for d, s, e in section["meetings"]]
-        if not touches_blocked_slot(section, blocked):
-            options.setdefault(section["course_code"], []).append(section)
+        section["blocked"] = {b for b in blocked if has_conflict(section, {"mins": [b]})}
+        options.setdefault(section["course_code"], []).append(section)
+
+    #required courses with no units and no time specified are still taken
+    for c in req:
+        if not c["units"].strip() and c["course_code"] not in options:
+            options[c["course_code"]] = [{"course_code": c["course_code"], "section": "-", "time_slot": "No time allotted",
+                                          "meetings": [], "mins": [], "blocked": set()}]
 
     req_codes = {c["course_code"] for c in req}
     opt_codes = []
@@ -158,10 +158,10 @@ def setup_a_star_inputs(program, specialization, year, semester, availability, t
 
     return options, course_units, req_codes, opt_codes
 
-def print_a_star_results(schedule, course_units, gap_penalty, academic_units, nodes):
+def print_a_star_results(schedule, course_units, fitness, academic_units, nodes):
     print(f"nodes expanded: {nodes}")
     print(f"best schedule: {academic_units} academic units out of {MAX_UNITS} max units")
-    print(f"gap penalty: {gap_penalty:.1f}")
+    print(f"fitness value: {fitness:.2f}")
     print(f"{'course':<14} {'section':<10} {'units':<7} meeting times")
     print("-" * 65)
 
@@ -172,10 +172,10 @@ def print_a_star_results(schedule, course_units, gap_penalty, academic_units, no
             units_label += " (hk)"
         print(f"{code:<14} {section['section']:<10} {units_label:<7} {section['time_slot']}")
 
-def a_star(program, specialization, year, semester, availability=None, gap=0, time_slots=None):
+def a_star(program, specialization, year, semester, blocked_times=()):
     print("solving timetable...")
     options, course_units, req_codes, opt_codes = setup_a_star_inputs(
-        program, specialization, year, semester, availability, time_slots or TIME_SLOTS
+        program, specialization, year, semester, blocked_times
     )
 
     if not req_codes:
@@ -184,7 +184,7 @@ def a_star(program, specialization, year, semester, availability=None, gap=0, ti
 
     missing = sorted(c for c in req_codes if not options.get(c))
     if missing:
-        print(f"error: required courses missing or fully blocked: {', '.join(missing)}")
+        print(f"error: required courses have no sections: {', '.join(missing)}")
         return []
 
     req_units = sum(course_units.get(c, 0) for c in req_codes if not c.startswith("HK "))
@@ -209,17 +209,36 @@ def a_star(program, specialization, year, semester, availability=None, gap=0, ti
         totals = (reach[next_depth] << units) & full
         return None if totals == 0 else MAX_UNITS - (totals.bit_length() - 1)
 
+    #classes added later can fill at most their own minutes of the current gaps
+    rest_minutes = [0] * (len(codes) + 1)
+    for i in range(len(codes) - 1, -1, -1):
+        rest_minutes[i] = rest_minutes[i + 1] + max(sum(e - s for _, s, e in sec["mins"]) for sec in options[codes[i]])
+
+    def soft_cost(chosen, depth):
+        #soft constraints: vacant minutes and blocked times
+        gap = gap_cost(chosen)
+        return SOFT_CONSTRAINT_WEIGHT * max(0, gap - rest_minutes[depth]) + blocked_cost(chosen), gap
+
+    def show(chosen, units):
+        #hard constraints are never allowed in a node
+        conflicts, academic_units, missing_required = schedule_metrics(chosen, course_units, req_codes)
+        if conflicts or academic_units > MAX_UNITS or missing_required:
+            print("no valid schedule found in this run.")
+            return []
+
+        print_a_star_results(chosen, course_units, solve_fitness(chosen, course_units, req_codes), academic_units, nodes)
+        return list(chosen)
+
     tie = count()
-    frontier = [(0.0, 0, next(tie), 0, (), 0)]
+    frontier = [(0.0, 0, 0, next(tie), 0, (), 0)]
     nodes = 0
 
     while frontier and nodes < MAXIMUM_NODES:
-        f, _, _, depth, chosen, units = heapq.heappop(frontier)
+        f, _, _, _, depth, chosen, units = heapq.heappop(frontier)
         nodes += 1
 
         if depth == len(codes):
-            print_a_star_results(chosen, course_units, gap_cost(chosen, gap), units, nodes)
-            return list(chosen)
+            return show(chosen, units)
 
         code = codes[depth]
         code_units = 0 if code.startswith("HK ") else course_units.get(code, 0)
@@ -234,17 +253,24 @@ def a_star(program, specialization, year, semester, availability=None, gap=0, ti
                 short = shortfall(new_units, depth + 1)
                 if short is None:
                     continue
-                g = gap_cost(new_chosen, gap)
+                g, gap = soft_cost(new_chosen, depth + 1)
                 h = UNIT_WEIGHT * short
-                heapq.heappush(frontier, (g + h, -(depth + 1), next(tie), depth + 1, new_chosen, new_units))
+                heapq.heappush(frontier, (g + h, gap, -(depth + 1), next(tie), depth + 1, new_chosen, new_units))
 
         #option 2: skip course (only allowed for optional/elective courses)
         if depth >= n_req:
             short = shortfall(units, depth + 1)
             if short is not None:
-                g = gap_cost(chosen, gap)
+                g, gap = soft_cost(chosen, depth + 1)
                 h = UNIT_WEIGHT * short
-                heapq.heappush(frontier, (g + h, -(depth + 1), next(tie), depth + 1, chosen, units))
+                heapq.heappush(frontier, (g + h, gap, -(depth + 1), next(tie), depth + 1, chosen, units))
+
+    #node limit reached: show the best complete schedule still waiting in the frontier
+    complete = [node for node in frontier if node[4] == len(codes)]
+    if complete:
+        print("node limit reached, showing the best schedule found so far (not guaranteed best).")
+        _, _, _, _, _, chosen, units = min(complete)
+        return show(chosen, units)
 
     print("no valid schedule found within search limits.")
     return []
