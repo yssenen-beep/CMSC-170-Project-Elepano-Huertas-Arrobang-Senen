@@ -21,6 +21,8 @@ Open <http://127.0.0.1:8000>. Use HTTP rather than opening `index.html` directly
 3. Choose **Deploy from a branch**, select **pages** and **/docs**, then **Save**.
 4. Wait for the Pages deployment to finish. Future pushes to `pages` update the page.
 
+If Pages is configured to use **/(root)** instead, the root `index.html` opens the project screen in `docs/` automatically, rather than displaying this README.
+
 Expected URL after enabling Pages:
 
 <https://yssenen-beep.github.io/CMSC-170-Project-Elepano-Huertas-Arrobang-Senen/>
