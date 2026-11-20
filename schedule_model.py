@@ -181,20 +181,127 @@ def slot_index(minutes: int) -> int:
     return (minutes - DAY_START_MIN) // SLOT_MIN
 
 
+def _slots_of(meeting: Meeting) -> range:
+    """Indexes of every 30-minute slot the meeting touches (even partially)."""
+    return range(slot_index(meeting.start), slot_index(meeting.end - 1) + 1)
+
+
+# The unavailable times of the schedule currently on screen. The UI hands them to
+# section_conflicts() every time it draws a result, so we remember them here and
+# ScheduleResult.fitness can use the same ones (see the end of this file).
+_current_blocked: set = set()
+
+
+def set_blocked(blocked: set) -> None:
+    """Optional: tell the model the unavailable times explicitly."""
+    global _current_blocked
+    _current_blocked = set(blocked)
+
+
 def section_conflicts(section: ScheduledSection, blocked: set) -> list:
     """blocked is a set of (day_index, slot_index). Returns the overlapping ones."""
+    global _current_blocked
+    _current_blocked = blocked
     hits = []
     for m in section.meetings:
         for d in m.days:
-            for t in range(m.start, m.end, SLOT_MIN):
-                if (d, slot_index(t)) in blocked:
-                    hits.append((d, slot_index(t)))
+            for s in _slots_of(m):
+                if (d, s) in blocked:
+                    hits.append((d, s))
     return hits
 
 
 # ----------------------------------------------------------------------------
-# Sample output (BSChE, 1st year, 1st sem) used for the GUI demo
+# One fitness formula for every algorithm (same as astar_scheduler.py,
+# genetic_algorithm.py and backtracking_scheduler.py), so results are comparable
 # ----------------------------------------------------------------------------
+
+HARD_CONSTRAINT_WEIGHT = 1000   # per conflict / excess unit
+SOFT_CONSTRAINT_WEIGHT = 0.01   # per vacant minute between classes
+DEFAULT_MAX_UNITS = 21
+
+FITNESS_FORMULA = ("academic units - 1000 x (conflicts + excess units) "
+                   "- 0.01 x vacant minutes - unavailable blocks used")
+
+
+@dataclass
+class FitnessBreakdown:
+    academic_units: float
+    conflicts: int
+    excess_units: float
+    vacant_minutes: int
+    blocked_used: int
+    fitness: float
+
+
+def _overlap(a: Meeting, b: Meeting) -> bool:
+    return bool(set(a.days) & set(b.days)) and a.start < b.end and b.start < a.end
+
+
+def compute_fitness(result: ScheduleResult, blocked: set) -> FitnessBreakdown:
+    """blocked is a set of (day_index, slot_index) the student is unavailable."""
+    sections = result.sections
+
+    conflicts = 0
+    for i, first in enumerate(sections):
+        for second in sections[i + 1:]:
+            if any(_overlap(a, b) for a in first.meetings for b in second.meetings):
+                conflicts += 1
+
+    by_day = {}
+    for s in sections:
+        for m in s.meetings:
+            for d in m.days:
+                by_day.setdefault(d, []).append((m.start, m.end))
+    vacant = 0
+    for intervals in by_day.values():
+        intervals.sort()
+        last_end = intervals[0][1]
+        for start, end in intervals[1:]:
+            vacant += max(0, start - last_end)
+            last_end = max(last_end, end)
+
+    used = set()
+    for s in sections:
+        for m in s.meetings:
+            for d in m.days:
+                for slot in _slots_of(m):
+                    if (d, slot) in blocked:
+                        used.add((d, slot))
+
+    units = result.academic_units
+    cap = result.max_units if result.max_units is not None else DEFAULT_MAX_UNITS
+    excess = max(0, units - cap)
+    fitness = (units
+               - HARD_CONSTRAINT_WEIGHT * (conflicts + excess)
+               - SOFT_CONSTRAINT_WEIGHT * vacant
+               - len(used))
+    return FitnessBreakdown(units, conflicts, excess, vacant, len(used), fitness)
+
+
+# ----------------------------------------------------------------------------
+# Standardized fitness
+#
+# Each algorithm reports its own fitness, and the formulas are not identical, so the
+# numbers are hard to compare. From here on, reading `result.fitness` always gives the
+# value from the one shared formula above (computed from the schedule itself and the
+# student's unavailable times). What the solver printed is still available as
+# `result.reported_fitness`.
+# ----------------------------------------------------------------------------
+
+
+def _get_fitness(self):
+    if not self.sections:
+        return self.__dict__.get("_reported_fitness")
+    return compute_fitness(self, _current_blocked).fitness
+
+
+def _set_fitness(self, value):
+    self.__dict__["_reported_fitness"] = value
+
+
+ScheduleResult.fitness = property(_get_fitness, _set_fitness)
+ScheduleResult.reported_fitness = property(lambda self: self.__dict__.get("_reported_fitness"))
 
 SAMPLE_OUTPUT = """\
 BSChE | GENERAL_ENGINEERING_INDUSTRY_RESEARCH | 1st year | 1st Semester
