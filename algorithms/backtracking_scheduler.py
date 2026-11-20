@@ -1,7 +1,13 @@
-import csv
 import re
 import sys
 from pathlib import Path
+from helper import (
+    DAY_ORDER, MAX_UNITS, MAX_NON_ACADEMIC_UNITS, SEARCH_NODE_LIMIT,
+    is_non_academic_course as is_non_academic_code,
+    meetings_conflict, normalize, parse_day_list, parse_integer, parse_number,
+    parse_time_slot, read_csv, to_minutes,
+)
+from helper import evaluate_schedule, fitness_from_metrics
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -12,69 +18,12 @@ SEMESTER_FILES = {
     2: FILTERED_DIR / "ceat_class_schedule_2nd_sem.csv",
 }
 SEMESTER_NAMES = {1: "1st Semester", 2: "2nd Semester"}
-SEARCH_NODE_LIMIT = 100_000
-MAX_ACADEMIC_UNITS = 21
-MAX_NON_ACADEMIC_UNITS = 5
+MAX_ACADEMIC_UNITS = MAX_UNITS
 
-DAY_ALIASES = {
-    "m": "M", "mon": "M", "monday": "M",
-    "t": "T", "tu": "T", "tue": "T", "tues": "T", "tuesday": "T",
-    "w": "W", "wed": "W", "wednesday": "W",
-    "th": "Th", "r": "Th", "thu": "Th", "thur": "Th", "thurs": "Th", "thursday": "Th",
-    "f": "F", "fri": "F", "friday": "F",
-    "s": "S", "sa": "S", "sat": "S", "saturday": "S",
-    "su": "Su", "sun": "Su", "sunday": "Su",
-}
-DAY_ORDER = {"M": 0, "T": 1, "W": 2, "Th": 3, "F": 4, "S": 5, "Su": 6}
-TIME_SLOT_RE = re.compile(
-    r"^\s*(.*?)\s+(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$"
-)
 BLOCKED_PERIOD_RE = re.compile(
     r"^\s*(?:(.*?)\s+)?(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$"
 )
-
-
-def normalize(value):
-    # Normalize case and repeated whitespace for matching CSV values.
-    return " ".join((value or "").strip().upper().split())
-
-
-def parse_integer(value):
-    try:
-        return int(float(str(value).strip()))
-    except (TypeError, ValueError):
-        return None
-
-
-def parse_number(value):
-    try:
-        return float(str(value).strip())
-    except (TypeError, ValueError):
-        return None
-
-
-def parse_clock(value):
-    match = re.fullmatch(r"\s*(\d{1,2}):(\d{2})\s*", value or "")
-    if not match:
-        return None
-    hour, minute = int(match.group(1)), int(match.group(2))
-    if hour > 23 or minute > 59:
-        return None
-    return hour * 60 + minute
-
-
-def parse_day_list(value):
-    # Parse comma-separated day names into a set of normalized day tokens.
-    if not value.strip():
-        return set()
-    days = set()
-    for part in value.split(","):
-        day = DAY_ALIASES.get(part.strip().casefold())
-        if day is None:
-            raise ValueError("Use comma-separated days such as M,T,Th,F.")
-        days.add(day)
-    return days
-
+parse_clock = to_minutes
 
 def parse_blocked_periods(value):
     # Parse periods such as 'M,T 08:00-10:00; W 13:00-15:00'.
@@ -95,38 +44,6 @@ def parse_blocked_periods(value):
         periods.append({"days": days, "window": (start, end)})
 
     return periods
-
-
-def parse_time_slot(value):
-    # Return (meetings, error), where meetings are (day, start, end) tuples.
-    if not (value or "").strip():
-        return (), None
-
-    match = TIME_SLOT_RE.fullmatch(value)
-    if not match:
-        return (), "unrecognized time format"
-
-    start, end = parse_clock(match.group(2)), parse_clock(match.group(3))
-    if start is None or end is None or end <= start:
-        return (), "invalid start or end time"
-
-    days = []
-    for part in match.group(1).split(","):
-        day = DAY_ALIASES.get(part.strip().casefold())
-        if day is None:
-            return (), "unrecognized weekday"
-        days.append(day)
-
-    if not days:
-        return (), "no weekdays"
-    meetings = tuple((day, start, end) for day in days)
-    return meetings, None
-
-
-def read_csv(path):
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        return list(csv.DictReader(handle))
-
 
 def choose_value(label, values):
     # Prompt for a value or its 1-based number in a displayed list.
@@ -240,15 +157,6 @@ def ask_preferences():
         "gap": preferred_gap,
     }
 
-
-def meetings_conflict(first, second):
-    for day_a, start_a, end_a in first:
-        for day_b, start_b, end_b in second:
-            if day_a == day_b and start_a < end_b and start_b < end_a:
-                return True
-    return False
-
-
 def option_fits(option, selected):
     for _, chosen in selected:
         if meetings_conflict(option["meetings"], chosen["meetings"]):
@@ -282,12 +190,9 @@ def blocked_minutes_for_meeting(day, start, end, blocked_periods):
             merged_start, merged_end = overlap_start, overlap_end
     return total + merged_end - merged_start
 
-
 def is_non_academic_course(course):
     # HK and NSTP units have a separate limit from academic course units.
-    parts = normalize(course.get("course_code")).split(maxsplit=1)
-    prefix = parts[0] if parts else ""
-    return prefix in {"HK", "NSTP"}
+    return is_non_academic_code(course.get("course_code"))
 
 
 def get_course_units(course, option):
@@ -523,6 +428,32 @@ def print_schedule(program, specialization, year, semester, courses, selected, s
         print(f"Units missing from data for {unknown_unit_courses} course(s).")
 
 
+def blocked_periods_to_times(blocked_periods):
+    # Turn blocked periods (days=None means every day) into (day, start_min, end_min) tuples
+    # that the shared evaluation understands.
+    times = []
+    for period in blocked_periods:
+        days = DAY_ORDER if period["days"] is None else period["days"]
+        for day in days:
+            times.append((day, *period["window"]))
+    return times
+
+
+def evaluate_selected(courses, selected, preferences):
+    # Run the shared evaluation (same metrics and fitness as the GA and A*) on a finished schedule.
+    sections = [option for _, option in selected]
+    course_units = {
+        course["course_code"]: get_course_units(course, option) or 0
+        for course, option in selected
+    }
+    return evaluate_schedule(
+        sections, course_units, {course["course_code"] for course in courses},
+        blocked_periods_to_times(preferences["blocked_periods"]),
+        max_units=MAX_ACADEMIC_UNITS, max_non_academic_units=MAX_NON_ACADEMIC_UNITS,
+        non_academic_prefixes=("HK", "NSTP"),
+    )
+
+
 def main():
     try:
         curriculum_rows = read_csv(CURRICULUM_FILE)
@@ -663,10 +594,14 @@ def main():
         program, specialization, year, semester,
         courses, best, final_score, preferences,
     )
+    metrics = evaluate_selected(courses, best, preferences)
+    print(
+        f"Shared fitness: {fitness_from_metrics(metrics):.2f} "
+        f"(valid: {metrics['valid']}, gap minutes: {metrics['gap_minutes']}, "
+        f"blocked times hit: {metrics['blocked_count']})"
+    )
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
-

@@ -12,10 +12,16 @@ for _p in (str(HERE), str(ROOT)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from schedule_model import (  # noqa: E402
+from schedule_model import (
     DAY_LABELS, DAY_START_MIN, SLOT_MIN,
     Meeting, ScheduledSection, ScheduleResult, fmt_time, result_from_text,
 )
+
+try:                                     
+    from schedule_model import SolverMessage
+except ImportError:
+    class SolverMessage(Exception):
+        """Friendly error text shown to the user."""
 
 CURRICULUM_FILE = "ceat_program_courses.csv"
 SCHEDULE_FILES = {
@@ -24,8 +30,6 @@ SCHEDULE_FILES = {
 }
 
 def find_data_dir() -> str:
-    """Look for the folder that holds ceat_program_courses.csv: the project root,
-    then each folder inside it (and one level deeper), whatever it is called."""
     seen = set()
     for base in (ROOT, HERE, Path.cwd()):
         candidates = [base]
@@ -47,8 +51,6 @@ def find_data_dir() -> str:
 
 
 def load_curriculum(data_dir: str) -> dict:
-    """{program: [specializations]} read from the curriculum CSV ({} if missing).
-    Values are kept exactly as written in the CSV because the algorithms match on them."""
     if not data_dir:
         return {}
     path = Path(data_dir) / CURRICULUM_FILE
@@ -66,14 +68,7 @@ def load_curriculum(data_dir: str) -> dict:
         for p, specs in sorted(programs.items(), key=lambda kv: kv[0].casefold())
     }
 
-
-# ----------------------------------------------------------------------------
-# Helpers
-# ----------------------------------------------------------------------------
-
-
 def blocked_tuples(blocked):
-    """30-minute blocks as ("M", "12:00", "12:30") - the format A* and GA expect."""
     out = []
     for day, slot in sorted(blocked):
         start = DAY_START_MIN + slot * SLOT_MIN
@@ -82,8 +77,6 @@ def blocked_tuples(blocked):
 
 
 def blocked_periods(blocked):
-    """Merged windows in the format backtracking expects:
-    {"days": {"M"}, "window": (start_min, end_min)}"""
     by_day = {}
     for day, slot in blocked:
         by_day.setdefault(day, []).append(slot)
@@ -110,6 +103,8 @@ def _leading_int(text: str) -> int:
 
 
 def _prepare(module_name: str, data_dir: str):
+    import helper
+    helper.DATA_DIR = data_dir
     if not data_dir or not (Path(data_dir) / CURRICULUM_FILE).is_file():
         raise SolverMessage(
             f"Could not find {CURRICULUM_FILE} in the data folder:\n"
@@ -124,7 +119,6 @@ def _prepare(module_name: str, data_dir: str):
 
 
 def _run_printing_solver(func, *args) -> str:
-    """Run an algorithm that prints its answer and return what it printed."""
     buffer = io.StringIO()
     with contextlib.redirect_stdout(buffer):
         func(*args)
@@ -137,14 +131,8 @@ def _message_from(output: str) -> str:
     return "\n".join(lines) or "No valid schedule was found."
 
 
-# ----------------------------------------------------------------------------
-# The three algorithms
-# ----------------------------------------------------------------------------
-
-
 def _astar(info, blocked, data_dir) -> ScheduleResult:
     mod = _prepare("astar_scheduler", data_dir)
-    mod.BASE = data_dir
     out = _run_printing_solver(
         mod.a_star, info.course, info.specialization, info.year, info.semester,
         blocked_tuples(blocked))
@@ -157,7 +145,6 @@ def _astar(info, blocked, data_dir) -> ScheduleResult:
 
 def _genetic(info, blocked, data_dir) -> ScheduleResult:
     mod = _prepare("genetic_algorithm", data_dir)
-    mod.BASE = data_dir
     out = _run_printing_solver(
         mod.genetic_algorithm, info.course, info.specialization, info.year, info.semester,
         blocked_tuples(blocked))
@@ -261,9 +248,6 @@ RUNNERS = {
 
 
 def run_solver(information, blocked, data_dir: str) -> ScheduleResult:
-    """information: the GUI's `info` object.
-    blocked: set of (day_index, slot_index) the student is NOT available.
-    data_dir: folder holding the CSV files."""
     runner = RUNNERS.get(information.algorithm)
     if runner is None:
         raise SolverMessage(f"Unknown algorithm: {information.algorithm}")
