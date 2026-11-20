@@ -1,0 +1,8591 @@
+{
+  "generated_at": "2026-11-20T08:50:54.866278+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "os": "Windows",
+    "machine": "AMD64",
+    "processor": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "config": {
+    "generations": 1000,
+    "population": 100,
+    "mutation_rate": 0.2,
+    "repeats": 3,
+    "timeout_sec": 60,
+    "node_limit": 100000,
+    "hash_seed": 0,
+    "profile": "default"
+  },
+  "sha256": {
+    "filtered/ceat_class_schedule_1st_sem.csv": "5afbcfa1275c8ead335daf9f2b79a6f1cdb026239fd8a3a8db345ec1d1ac35a6",
+    "filtered/ceat_class_schedule_2nd_sem.csv": "794ce099ce7160e389c03556827ad077c579f3efb5f564a741805d07af862040",
+    "filtered/ceat_elective_pools.csv": "53d8b749ac3526d349f8b9845d62e6e226124797bdae59219834d6d1cab8ec81",
+    "filtered/ceat_program_courses.csv": "a7d19123b12d8caae1f4f58660083070f3eb1c3a269227f09cbdfe47a0ee6561",
+    "algorithms/astar_scheduler.py": "5fed1590ff49d83123cf310fa023825dc0e12dc8b888ac769dd46fd0ef8279d6",
+    "algorithms/backtracking_scheduler.py": "077949862f507cdac7c64ac99062d23476c77ef4c8851ccf45f4e3baee037bf6",
+    "algorithms/genetic_algorithm.py": "36972b4d5bafb382b7e7d3cf8c411686d12a91c53902ab2c3d86a1b8a8331db1",
+    "algorithms/helper.py": "b9b317433630d74bbbd51125eee8d56eed09669d7fa7ac91367d765f0e7a66f3",
+    "algorithms/solvers.py": "e304932425c97e7c2b1159df30be22306ac0855b88c64ca10efe9b9514e5d0e2",
+    "schedule_model.py": "97aa48d1508a77d57bcf6a0cce1226e6eb1cd6bcd81dbfb603e10e8d7958eadf",
+    "scripts/benchmark.py": "0ad20dc551f006bf7dd0e080d38ffee1ecfbc2799ff75ccff4e22f954aa90d81"
+  },
+  "cases": [
+    {
+      "id": "ce-open",
+      "label": "Civil Engineering \u00b7 Year 1 \u00b7 Sem 1",
+      "program": "BSCE",
+      "specialization": "GENERAL",
+      "year": "1st year",
+      "semester": "1st Semester",
+      "blocked": []
+    },
+    {
+      "id": "ce-blocked",
+      "label": "Civil Engineering \u00b7 With unavailable hours",
+      "program": "BSCE",
+      "specialization": "GENERAL",
+      "year": "1st year",
+      "semester": "1st Semester",
+      "blocked": [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "id": "me-senior",
+      "label": "Mechanical Engineering \u00b7 Year 4 \u00b7 Sem 2",
+      "program": "BSME",
+      "specialization": "GENERAL",
+      "year": "4th year",
+      "semester": "2nd Semester",
+      "blocked": []
+    },
+    {
+      "id": "ce-gap30",
+      "label": "Civil Engineering \u00b7 30-minute target gap",
+      "program": "BSCE",
+      "specialization": "GENERAL",
+      "year": "1st year",
+      "semester": "1st Semester",
+      "gap_minutes": 30,
+      "blocked": []
+    },
+    {
+      "id": "ce-gap60",
+      "label": "Civil Engineering \u00b7 60-minute target gap",
+      "program": "BSCE",
+      "specialization": "GENERAL",
+      "year": "1st year",
+      "semester": "1st Semester",
+      "gap_minutes": 60,
+      "blocked": []
+    },
+    {
+      "id": "ce-gap120-blocked",
+      "label": "Civil Engineering \u00b7 120-minute gap + unavailable hours",
+      "program": "BSCE",
+      "specialization": "GENERAL",
+      "year": "1st year",
+      "semester": "1st Semester",
+      "gap_minutes": 120,
+      "blocked": [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    }
+  ],
+  "methods": [
+    "Backtracking",
+    "A*",
+    "Genetic Algorithm"
+  ],
+  "runs": [
+    {
+      "case": "ce-open",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.019728100014617667,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 510,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 42.5,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 14.899999999999999,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "D",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.019200999988242984,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 510,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 42.5,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 14.899999999999999,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "D",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01923870001337491,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 510,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 42.5,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 14.899999999999999,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "D",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.014499600016279146,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.0162772000185214,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01465739999548532,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 17.918542900006287,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "Z1",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "CD",
+          "meetings": [
+            [
+              "M",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD4",
+          "meetings": [
+            [
+              "W",
+              660,
+              720
+            ],
+            [
+              "F",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "Y",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "8L",
+          "meetings": [
+            [
+              "W",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 17.134719399997266,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 5,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "S1",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD2",
+          "meetings": [
+            [
+              "W",
+              660,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-open",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 17.35526129999198,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "Y1",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "Z",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "5L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.019433200010098517,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 780,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 65,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 12.2,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "GH2",
+          "meetings": [
+            [
+              "M",
+              960,
+              1080
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.019677800009958446,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 780,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 65,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 12.2,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "GH2",
+          "meetings": [
+            [
+              "M",
+              960,
+              1080
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.019938900019042194,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 780,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 65,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 12.2,
+      "nodes": 10,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "GH2",
+          "meetings": [
+            [
+              "M",
+              960,
+              1080
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.014363599999342114,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.014391200005775318,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01567230001091957,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 25.252543099981267,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "YZ2",
+          "meetings": [
+            [
+              "T",
+              960,
+              1080
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "H1",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 26.07736960001057,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 5,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "S1",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "EF",
+          "meetings": [
+            [
+              "M",
+              840,
+              900
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD2",
+          "meetings": [
+            [
+              "W",
+              660,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "Y1",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 26.946198499994352,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 4.615384615384615,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "CD",
+          "meetings": [
+            [
+              "M",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD4",
+          "meetings": [
+            [
+              "W",
+              660,
+              720
+            ],
+            [
+              "F",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "U1",
+          "meetings": [
+            [
+              "T",
+              600,
+              690
+            ],
+            [
+              "Th",
+              600,
+              690
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "me-senior",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01871270002448,
+      "conflicts": 0,
+      "academic_units": 8.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": null,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 8.0,
+      "nodes": 3,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01926250001997687,
+      "conflicts": 0,
+      "academic_units": 8.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": null,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 8.0,
+      "nodes": 3,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.02005809999536723,
+      "conflicts": 0,
+      "academic_units": 8.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": null,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 8.0,
+      "nodes": 3,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.013003400003071874,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 19,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "AMPE 133",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              600,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "AMPE 134",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "IE 141",
+          "section": "W",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "STAT 168",
+          "section": "UV1L",
+          "meetings": [
+            [
+              "M",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.013165899988962337,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 19,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "AMPE 133",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              600,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "AMPE 134",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "IE 141",
+          "section": "W",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "STAT 168",
+          "section": "UV1L",
+          "meetings": [
+            [
+              "M",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 0.01304990000789985,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 19,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "AMPE 133",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              600,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "AMPE 134",
+          "section": "YZ1L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "IE 141",
+          "section": "W",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "STAT 168",
+          "section": "UV1L",
+          "meetings": [
+            [
+              "M",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 0,
+      "runtime_sec": 10.215670500008855,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "HUM 3",
+          "section": "C1",
+          "meetings": [
+            [
+              "W",
+              600,
+              690
+            ],
+            [
+              "F",
+              600,
+              690
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "SAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "SCIENCE 10",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "SCIENCE 11",
+          "section": "G",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 0,
+      "runtime_sec": 10.523228999983985,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "HUM 3",
+          "section": "X",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "MGT 101",
+          "section": "C1",
+          "meetings": [
+            [
+              "W",
+              600,
+              690
+            ],
+            [
+              "F",
+              600,
+              690
+            ]
+          ]
+        },
+        {
+          "course_code": "SCIENCE 10",
+          "section": "D",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "SOSC 3",
+          "section": "Y",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "me-senior",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 0,
+      "runtime_sec": 10.648760899988702,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": null,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "MATH 10",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 181",
+          "section": "W1L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "ME 182",
+          "section": "T1L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "SAS 1",
+          "section": "G",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "STAT 162",
+          "section": "E2L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "WIKA 1",
+          "section": "U1",
+          "meetings": [
+            [
+              "T",
+              600,
+              690
+            ],
+            [
+              "Th",
+              600,
+              690
+            ]
+          ]
+        }
+      ],
+      "required_count": 2
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 30,
+      "runtime_sec": 2.1022347999969497,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 150,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 12.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 18.5,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "13L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ],
+            [
+              "F",
+              420,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 30,
+      "runtime_sec": 2.249529499997152,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 150,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 12.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 18.5,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "13L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ],
+            [
+              "F",
+              420,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 30,
+      "runtime_sec": 2.071348299999954,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 150,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 12.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 18.5,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "13L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ],
+            [
+              "F",
+              420,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "FG1",
+          "meetings": [
+            [
+              "W",
+              900,
+              1020
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              690,
+              780
+            ],
+            [
+              "F",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "11L",
+          "meetings": [
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 30,
+      "runtime_sec": 0.013824499998008832,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 30,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 30,
+      "runtime_sec": 0.013810700009344146,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 30,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 30,
+      "runtime_sec": 0.016223199985688552,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 30,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 30,
+      "runtime_sec": 17.698426700022537,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 30,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "Z1",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "CD",
+          "meetings": [
+            [
+              "M",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD4",
+          "meetings": [
+            [
+              "W",
+              660,
+              720
+            ],
+            [
+              "F",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "Y",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "8L",
+          "meetings": [
+            [
+              "W",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 30,
+      "runtime_sec": 15.920278600009624,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 5,
+      "gap_target_error": 25,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "S1",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD2",
+          "meetings": [
+            [
+              "W",
+              660,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 30,
+      "runtime_sec": 15.649944799981313,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 30,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "Y1",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "Z",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "5L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 60,
+      "runtime_sec": 2.117693000007421,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 720,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 55.38461538461539,
+      "gap_target_error": 32.30769230769231,
+      "status": "returned",
+      "fitness": 12.8,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "15L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 60,
+      "runtime_sec": 2.0994082000106573,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 720,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 55.38461538461539,
+      "gap_target_error": 32.30769230769231,
+      "status": "returned",
+      "fitness": 12.8,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "15L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 60,
+      "runtime_sec": 2.1161262999812607,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 720,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 55.38461538461539,
+      "gap_target_error": 32.30769230769231,
+      "status": "returned",
+      "fitness": 12.8,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "10L",
+          "meetings": [
+            [
+              "T",
+              960,
+              1140
+            ],
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "D1",
+          "meetings": [
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "A1",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "V",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "15L",
+          "meetings": [
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 60,
+      "runtime_sec": 0.01424419999239035,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 60,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 60,
+      "runtime_sec": 0.013949699990916997,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 60,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 60,
+      "runtime_sec": 0.013831200019922107,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 60,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 16,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 60,
+      "runtime_sec": 15.806151500000851,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 60,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "Z1",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "CD",
+          "meetings": [
+            [
+              "M",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD4",
+          "meetings": [
+            [
+              "W",
+              660,
+              720
+            ],
+            [
+              "F",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "Y",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "8L",
+          "meetings": [
+            [
+              "W",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 60,
+      "runtime_sec": 17.008108899986837,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 5,
+      "gap_target_error": 55,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "S1",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD2",
+          "meetings": [
+            [
+              "W",
+              660,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "B1",
+          "meetings": [
+            [
+              "W",
+              510,
+              600
+            ],
+            [
+              "F",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 60,
+      "runtime_sec": 16.89829009998357,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 60,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "E1",
+          "meetings": [
+            [
+              "W",
+              780,
+              870
+            ],
+            [
+              "F",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "Y1",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "F1",
+          "meetings": [
+            [
+              "W",
+              870,
+              960
+            ],
+            [
+              "F",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "Z",
+          "meetings": [
+            [
+              "T",
+              1050,
+              1140
+            ],
+            [
+              "Th",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "5L",
+          "meetings": [
+            [
+              "W",
+              420,
+              600
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Backtracking",
+      "seed": 0,
+      "target_gap_minutes": 120,
+      "runtime_sec": 3.6685096000146586,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 1290,
+      "blocked_count": 2,
+      "valid": true,
+      "average_gap": 107.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 5.1,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "A",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "YZ1",
+          "meetings": [
+            [
+              "Th",
+              1020,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "H1",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "17L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Backtracking",
+      "seed": 1,
+      "target_gap_minutes": 120,
+      "runtime_sec": 3.6682972999988124,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 1290,
+      "blocked_count": 2,
+      "valid": true,
+      "average_gap": 107.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 5.1,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "A",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "YZ1",
+          "meetings": [
+            [
+              "Th",
+              1020,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "H1",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "17L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Backtracking",
+      "seed": 2,
+      "target_gap_minutes": 120,
+      "runtime_sec": 3.6826766000012867,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 1290,
+      "blocked_count": 2,
+      "valid": true,
+      "average_gap": 107.5,
+      "gap_target_error": 17.5,
+      "status": "returned",
+      "fitness": 5.1,
+      "nodes": 100000,
+      "node_limit_reached": true,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "A",
+          "meetings": [
+            [
+              "W",
+              420,
+              510
+            ],
+            [
+              "F",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "S",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "YZ1",
+          "meetings": [
+            [
+              "Th",
+              1020,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "H1",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "17L",
+          "meetings": [
+            [
+              "M",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "A*",
+      "seed": 0,
+      "target_gap_minutes": 120,
+      "runtime_sec": 0.013925699982792139,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 120,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "A*",
+      "seed": 1,
+      "target_gap_minutes": 120,
+      "runtime_sec": 0.013778299995465204,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 120,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "A*",
+      "seed": 2,
+      "target_gap_minutes": 120,
+      "runtime_sec": 0.014510599983623251,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 120,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": 13,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "C",
+          "meetings": [
+            [
+              "M",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "H",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD1",
+          "meetings": [
+            [
+              "W",
+              600,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 0,
+      "target_gap_minutes": 120,
+      "runtime_sec": 25.420708599995123,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 0,
+      "gap_target_error": 120,
+      "status": "returned",
+      "fitness": 20.0,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "E",
+          "meetings": [
+            [
+              "M",
+              780,
+              840
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "YZ2",
+          "meetings": [
+            [
+              "T",
+              960,
+              1080
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "H1",
+          "meetings": [
+            [
+              "W",
+              1050,
+              1140
+            ],
+            [
+              "F",
+              1050,
+              1140
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 1,
+      "target_gap_minutes": 120,
+      "runtime_sec": 23.3861048000108,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 5,
+      "gap_target_error": 115,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "S1",
+          "meetings": [
+            [
+              "T",
+              420,
+              510
+            ],
+            [
+              "Th",
+              420,
+              510
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "EF",
+          "meetings": [
+            [
+              "M",
+              840,
+              900
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "T",
+              780,
+              960
+            ],
+            [
+              "Th",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "T1",
+          "meetings": [
+            [
+              "T",
+              510,
+              600
+            ],
+            [
+              "Th",
+              510,
+              600
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD2",
+          "meetings": [
+            [
+              "W",
+              660,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "V1",
+          "meetings": [
+            [
+              "T",
+              690,
+              780
+            ],
+            [
+              "Th",
+              690,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "Y1",
+          "meetings": [
+            [
+              "T",
+              960,
+              1050
+            ],
+            [
+              "Th",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "CU",
+          "meetings": [
+            [
+              "T",
+              600,
+              660
+            ],
+            [
+              "W",
+              600,
+              660
+            ],
+            [
+              "Th",
+              600,
+              660
+            ],
+            [
+              "F",
+              600,
+              660
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "7L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Genetic Algorithm",
+      "seed": 2,
+      "target_gap_minutes": 120,
+      "runtime_sec": 24.721794599987334,
+      "conflicts": 0,
+      "academic_units": 20.0,
+      "non_academic_units": 2.0,
+      "excess_units": 0,
+      "missing_required": 0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "valid": true,
+      "average_gap": 4.615384615384615,
+      "gap_target_error": 115.38461538461539,
+      "status": "returned",
+      "fitness": 19.4,
+      "nodes": null,
+      "node_limit_reached": false,
+      "schedule": [
+        {
+          "course_code": "ARTS 1",
+          "section": "G1",
+          "meetings": [
+            [
+              "W",
+              960,
+              1050
+            ],
+            [
+              "F",
+              960,
+              1050
+            ]
+          ]
+        },
+        {
+          "course_code": "CE 10",
+          "section": "CD",
+          "meetings": [
+            [
+              "M",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "ENSC 10.1",
+          "section": "19L",
+          "meetings": [
+            [
+              "W",
+              780,
+              960
+            ],
+            [
+              "F",
+              780,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HIST 1",
+          "section": "X1",
+          "meetings": [
+            [
+              "T",
+              870,
+              960
+            ],
+            [
+              "Th",
+              870,
+              960
+            ]
+          ]
+        },
+        {
+          "course_code": "HK 11",
+          "section": "CD4",
+          "meetings": [
+            [
+              "W",
+              660,
+              720
+            ],
+            [
+              "F",
+              660,
+              720
+            ]
+          ]
+        },
+        {
+          "course_code": "KAS 1",
+          "section": "W1",
+          "meetings": [
+            [
+              "T",
+              780,
+              870
+            ],
+            [
+              "Th",
+              780,
+              870
+            ]
+          ]
+        },
+        {
+          "course_code": "MATH 27",
+          "section": "U1",
+          "meetings": [
+            [
+              "T",
+              600,
+              690
+            ],
+            [
+              "Th",
+              600,
+              690
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71",
+          "section": "DV",
+          "meetings": [
+            [
+              "T",
+              720,
+              780
+            ],
+            [
+              "W",
+              720,
+              780
+            ],
+            [
+              "Th",
+              720,
+              780
+            ],
+            [
+              "F",
+              720,
+              780
+            ]
+          ]
+        },
+        {
+          "course_code": "PHYS 71.1",
+          "section": "12L",
+          "meetings": [
+            [
+              "Th",
+              960,
+              1140
+            ]
+          ]
+        }
+      ],
+      "required_count": 9
+    }
+  ],
+  "summary": [
+    {
+      "case": "ce-open",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.01923870001337491,
+      "fitness": 14.899999999999999,
+      "academic_units": 20.0,
+      "gap_minutes": 510,
+      "blocked_count": 0,
+      "average_gap": 42.5,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-open",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.01465739999548532,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-open",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 17.35526129999198,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.019677800009958446,
+      "fitness": 12.2,
+      "academic_units": 20.0,
+      "gap_minutes": 780,
+      "blocked_count": 0,
+      "average_gap": 65,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-blocked",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.014391200005775318,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-blocked",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 26.07736960001057,
+      "fitness": 19.4,
+      "academic_units": 20.0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "average_gap": 4.615384615384615,
+      "gap_target_error": null
+    },
+    {
+      "case": "me-senior",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.01926250001997687,
+      "fitness": 8.0,
+      "academic_units": 8.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": null,
+      "gap_target_error": null
+    },
+    {
+      "case": "me-senior",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.01304990000789985,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": null
+    },
+    {
+      "case": "me-senior",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 10.523228999983985,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": null
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 2.1022347999969497,
+      "fitness": 18.5,
+      "academic_units": 20.0,
+      "gap_minutes": 150,
+      "blocked_count": 0,
+      "average_gap": 12.5,
+      "gap_target_error": 17.5
+    },
+    {
+      "case": "ce-gap30",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.013824499998008832,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": 30
+    },
+    {
+      "case": "ce-gap30",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 15.920278600009624,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": 30
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 2.1161262999812607,
+      "fitness": 12.8,
+      "academic_units": 20.0,
+      "gap_minutes": 720,
+      "blocked_count": 0,
+      "average_gap": 55.38461538461539,
+      "gap_target_error": 32.30769230769231
+    },
+    {
+      "case": "ce-gap60",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.013949699990916997,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": 60
+    },
+    {
+      "case": "ce-gap60",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 16.89829009998357,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": 60
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Backtracking",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 3.6685096000146586,
+      "fitness": 5.1,
+      "academic_units": 20.0,
+      "gap_minutes": 1290,
+      "blocked_count": 2,
+      "average_gap": 107.5,
+      "gap_target_error": 17.5
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "A*",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 0.013925699982792139,
+      "fitness": 20.0,
+      "academic_units": 20.0,
+      "gap_minutes": 0,
+      "blocked_count": 0,
+      "average_gap": 0,
+      "gap_target_error": 120
+    },
+    {
+      "case": "ce-gap120-blocked",
+      "method": "Genetic Algorithm",
+      "runs": 3,
+      "valid_runs": 3,
+      "success_pct": 100.0,
+      "timeouts": 0,
+      "median_runtime": 24.721794599987334,
+      "fitness": 19.4,
+      "academic_units": 20.0,
+      "gap_minutes": 60,
+      "blocked_count": 0,
+      "average_gap": 4.615384615384615,
+      "gap_target_error": 115.38461538461539
+    }
+  ]
+}
