@@ -24,10 +24,6 @@ except ImportError:
         """Friendly error text shown to the user."""
 
 CURRICULUM_FILE = "ceat_program_courses.csv"
-SCHEDULE_FILES = {
-    1: "ceat_class_schedule_1st_sem.csv",
-    2: "ceat_class_schedule_2nd_sem.csv",
-}
 
 def find_data_dir() -> str:
     seen = set()
@@ -169,18 +165,15 @@ def _group_meetings(tuples):
 
 def _backtracking(info, blocked, data_dir) -> ScheduleResult:
     bt = _prepare("backtracking_scheduler", data_dir)
-    root = Path(data_dir)
     year, semester = _leading_int(info.year), _leading_int(info.semester)
 
-    rows = bt.read_csv(root / CURRICULUM_FILE)
-    courses = bt.get_curriculum_courses(rows, info.course, info.specialization, year, semester)
+    try:
+        courses, offerings, _invalid = bt.load_courses_and_offerings(
+            info.course, info.specialization, year, semester)
+    except FileNotFoundError as e:
+        raise SolverMessage(f"Could not find the class schedule file:\n{e.filename or e}")
     if not courses:
         raise SolverMessage("No courses were found for that program, year, and semester.")
-
-    schedule_path = root / SCHEDULE_FILES[semester]
-    if not schedule_path.is_file():
-        raise SolverMessage(f"Could not find the class schedule file:\n{schedule_path}")
-    offerings, _invalid = bt.load_offerings(schedule_path)
 
     missing = [c["course_code"] for c in courses
                if not offerings.get(bt.normalize(c["course_code"]))]
