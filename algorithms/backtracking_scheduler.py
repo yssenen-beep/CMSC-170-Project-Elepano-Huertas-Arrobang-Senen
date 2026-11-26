@@ -7,46 +7,40 @@ from helper import (
 MAX_ACADEMIC_UNITS = MAX_UNITS
 
 
+def course_record(row, required):
+    return {
+        "course_code": (row["course_code"] or "").strip(),
+        "units": parse_number(row["units"]),
+        "required": required,
+    }
+
+
 def load_courses_and_offerings(program, specialization, year, semester):
     # Read the term through helper.load_term_data (the same loader A* and the GA use),
-    # then reshape it for the search: the term's plan courses without duplicates, and
-    # their sections grouped by normalized course code.
-    required, _specialized, _electives, _ge, sections = load_term_data(
+    # then reshape it for the search: the term's plan courses without duplicates, the
+    # optional courses that may fill up the units, and their sections grouped by normalized course code.
+    required, specialized, electives, ge, sections = load_term_data(
         program, specialization, year, semester
     )
 
     courses = []
     seen = set()
     for row in required:
-        code = (row["course_code"] or "").strip()
-        key = normalize(code)
+        key = normalize(row["course_code"])
         if not key or key in seen:
             continue
         seen.add(key)
-        courses.append({
-            "course_code": code,
-            "course_title": (row["course_title"] or "").strip(),
-            "units": parse_number(row["units"]),
-            "course_type": (row["course_type"] or "").strip(),
-        })
+        courses.append(course_record(row, required=True))
 
     offerings = {}
     invalid_times = []
     for section in sections:
-        code = (section["course_code"] or "").strip()
-        raw_slot = (section["time_slot"] or "").strip()
-        if raw_slot and not section["meetings"]:
+        if section["time_slot"].strip() and not section["meetings"]:
             # helper.parse_meetings gives no meetings for a time slot it cannot read
-            invalid_times.append((code, raw_slot))
+            invalid_times.append((section["course_code"], section["time_slot"]))
             continue
-        offerings.setdefault(normalize(code), []).append({
-            "course_code": code,
-            "units": parse_number(section["units"]),
-            "class_type": (section["class_type"] or "").strip(),
-            "section": (section["section"] or "").strip(),
-            "time_slot": raw_slot,
-            "meetings": section["meetings"],
-        })
+        section["units"] = parse_number(section["units"])
+        offerings.setdefault(normalize(section["course_code"]), []).append(section)
 
     # same rule as A* and the GA: a plan course with no units and no sections is still
     # taken, as a placeholder with no meeting time
@@ -62,41 +56,35 @@ def load_courses_and_offerings(program, specialization, year, semester):
                 "meetings": [],
             }]
 
+    # same pool as A* and the GA: specialized, elective and GE courses are optional
+    # the search may add up to the unit cap, if they still have units
+    for row in specialized + electives + ge:
+        key = normalize(row["course_code"])
+        timed = [option for option in offerings.get(key, []) if option["meetings"]]
+        if key in seen or not parse_number(row["units"]) or not timed:
+            continue
+        if is_non_academic_code(row["course_code"]):
+            continue
+        seen.add(key)
+        offerings[key] = timed
+        courses.append(course_record(row, required=False))
+
     return courses, offerings, invalid_times
 
 
 def option_fits(option, selected):
-    for _, chosen in selected:
-        if meetings_conflict(option["meetings"], chosen["meetings"]):
-            return False
-    return True
+    return not any(meetings_conflict(option["meetings"], chosen["meetings"]) for _, chosen in selected)
 
 
 def blocked_minutes_for_meeting(day, start, end, blocked_periods):
-    # Merge matching block overlaps so overlapping blocks are not double-counted.
-    overlaps = []
-    for period in blocked_periods:
-        if period["days"] is not None and day not in period["days"]:
-            continue
-        block_start, block_end = period["window"]
-        overlap_start = max(start, block_start)
-        overlap_end = min(end, block_end)
-        if overlap_start < overlap_end:
-            overlaps.append((overlap_start, overlap_end))
-
-    overlaps.sort()
-    if not overlaps:
-        return 0
-
+    # The UI sends blocked times as separate, non-overlapping runs per day,
+    # so the overlaps can simply be added up.
     total = 0
-    merged_start, merged_end = overlaps[0]
-    for overlap_start, overlap_end in overlaps[1:]:
-        if overlap_start <= merged_end:
-            merged_end = max(merged_end, overlap_end)
-        else:
-            total += merged_end - merged_start
-            merged_start, merged_end = overlap_start, overlap_end
-    return total + merged_end - merged_start
+    for period in blocked_periods:
+        if day in period["days"]:
+            block_start, block_end = period["window"]
+            total += max(0, min(end, block_end) - max(start, block_start))
+    return total
 
 def is_non_academic_course(course):
     # HK and NSTP units have a separate limit from academic course units.
@@ -129,17 +117,8 @@ def option_within_unit_limits(
     max_academic_units=MAX_ACADEMIC_UNITS,
     max_non_academic_units=MAX_NON_ACADEMIC_UNITS,
 ):
-    academic, non_academic = unit_totals(selected)
-    units = get_course_units(course, option)
-    if units is not None:
-        if is_non_academic_course(course):
-            non_academic += units
-        else:
-            academic += units
-    return (
-        academic <= max_academic_units
-        and non_academic <= max_non_academic_units
-    )
+    academic, non_academic = unit_totals(selected + [(course, option)])
+    return academic <= max_academic_units and non_academic <= max_non_academic_units
 
 
 def score_schedule(selected, preferences):
@@ -194,17 +173,37 @@ def search_schedule(
     max_non_academic_units=MAX_NON_ACADEMIC_UNITS,
 ):
     # Use recursive backtracking to find the best schedule within a node budget.
-    if max_academic_units is None:
-        max_academic_units = MAX_ACADEMIC_UNITS
-    if max_non_academic_units is None:
-        max_non_academic_units = MAX_NON_ACADEMIC_UNITS
+    # required courses must be placed, optional ones may be added or skipped, more academic units is better
+    def option_count(course):
+        return len(offerings[normalize(course["course_code"])])
 
-    ordered_courses = sorted(
-        courses,
-        key=lambda course: len(offerings[normalize(course["course_code"])]),
+    # required courses first, then optional ones, each with the fewest sections first (as A*)
+    ordered_courses = (
+        sorted((c for c in courses if c.get("required", True)), key=option_count)
+        + sorted((c for c in courses if not c.get("required", True)), key=option_count)
     )
 
+    # reachable[i]: academic unit totals the courses from position i on can still add
+    # without passing the cap (required courses must be taken), like A*'s reach table
+    reachable = [set() for _ in ordered_courses] + [{0.0}]
+    for i in range(len(ordered_courses) - 1, -1, -1):
+        course = ordered_courses[i]
+        unit_choices = {0.0} if is_non_academic_course(course) else {
+            get_course_units(course, option) or 0.0
+            for option in offerings[normalize(course["course_code"])]
+        }
+        taken = {
+            total + units
+            for total in reachable[i + 1] for units in unit_choices
+            if total + units <= max_academic_units
+        }
+        reachable[i] = taken if course.get("required", True) else taken | reachable[i + 1]
+    if not reachable[0]:
+        return None, -1.0, 0, False     # the required courses alone go over the unit cap
+    unit_goal = max(reachable[0])
+
     best_schedule = None
+    best_units = -1.0
     best_score = -1.0
     expanded_nodes = 0
     limit_reached = False
@@ -212,24 +211,39 @@ def search_schedule(
     any_preference = bool(preferences["blocked_periods"]) or preferences["gap"] is not None
 
     def backtrack(index, selected):
-        nonlocal best_schedule, best_score, expanded_nodes, limit_reached, stop_search
+        nonlocal best_schedule, best_units, best_score, expanded_nodes, limit_reached, stop_search
 
         if stop_search:
             return
         if expanded_nodes >= SEARCH_NODE_LIMIT:
             limit_reached = True
             return
+
+        academic, _ = unit_totals(selected)
+        if best_schedule is not None:
+            most_units = max(
+                (academic + total for total in reachable[index]
+                 if academic + total <= max_academic_units),
+                default=None,
+            )
+            score_settled = not any_preference or best_score >= 100.0
+            if most_units is None or most_units < best_units or (
+                most_units == best_units and score_settled
+            ):
+                return      # this branch cannot beat the best schedule found so far
         expanded_nodes += 1
 
         if index == len(ordered_courses):
             result = score_schedule(selected, preferences)
             score = result["overall"]
             comparable_score = score if score is not None else 0.0
-            if comparable_score > best_score:
-                best_score = comparable_score
+            if (academic, comparable_score) > (best_units, best_score):
+                best_units, best_score = academic, comparable_score
                 best_schedule = list(selected)
 
-            if not any_preference or score is None or comparable_score >= 100.0:
+            if academic >= unit_goal and (
+                not any_preference or score is None or comparable_score >= 100.0
+            ):
                 stop_search = True
             return
 
@@ -260,6 +274,9 @@ def search_schedule(
             selected.pop()
             if limit_reached:
                 return
+
+        if not course.get("required", True) and not stop_search:
+            backtrack(index + 1, selected)
 
     backtrack(0, [])
     return best_schedule, best_score, expanded_nodes, limit_reached
