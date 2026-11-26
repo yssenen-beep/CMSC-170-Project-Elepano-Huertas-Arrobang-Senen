@@ -48,6 +48,20 @@ def load_courses_and_offerings(program, specialization, year, semester):
             "meetings": section["meetings"],
         })
 
+    # same rule as A* and the GA: a plan course with no units and no sections is still
+    # taken, as a placeholder with no meeting time
+    for course in courses:
+        key = normalize(course["course_code"])
+        if course["units"] is None and key not in offerings:
+            offerings[key] = [{
+                "course_code": course["course_code"],
+                "units": 0.0,
+                "class_type": "",
+                "section": "-",
+                "time_slot": "No time allotted",
+                "meetings": [],
+            }]
+
     return courses, offerings, invalid_times
 
 
