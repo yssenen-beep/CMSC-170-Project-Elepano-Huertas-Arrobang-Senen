@@ -129,13 +129,22 @@ def _message_from(output: str) -> str:
 
 def _astar(info, blocked, data_dir) -> ScheduleResult:
     mod = _prepare("astar_scheduler", data_dir)
-    out = _run_printing_solver(
-        mod.a_star, info.course, info.specialization, info.year, info.semester,
-        blocked_tuples(blocked))
+    gap_min = int(round(info.gap * 60)) if info.gap > 0 else 0
+    buffer = io.StringIO()
+    with contextlib.redirect_stdout(buffer):
+        mod.a_star(
+            info.course, info.specialization, info.year, info.semester,
+            blocked_tuples(blocked),
+            preferred_gap=gap_min,
+        )
+    out = buffer.getvalue()
     result = result_from_text(out)
     if not result.sections:
         raise SolverMessage(_message_from(out))
-    result.extra = {"Node limit": f"{mod.MAXIMUM_NODES:,}"}
+    result.extra = {
+        "Node limit": f"{mod.MAXIMUM_NODES:,}",
+        "Target gap": f"{gap_min} min" if gap_min else "0 min (minimize gaps)",
+    }
     return result
 
 

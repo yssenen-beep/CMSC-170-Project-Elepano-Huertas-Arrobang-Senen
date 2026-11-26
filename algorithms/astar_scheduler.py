@@ -4,7 +4,7 @@ from helper import (
     MAX_UNITS, SEARCH_NODE_LIMIT, SOFT_CONSTRAINT_WEIGHT,
     gap_minutes, load_term_data, meetings_conflict, parse_integer, to_minutes,
 )
-from helper import evaluate_schedule, fitness_from_metrics
+from helper import evaluate_schedule, fitness_from_metrics, is_non_academic_course
 
 MAXIMUM_NODES = SEARCH_NODE_LIMIT
 UNIT_WEIGHT = 1.0
@@ -13,8 +13,22 @@ def has_conflict(a, b):
     return meetings_conflict(a["meetings"], b["meetings"])
 
 
-def gap_cost(sections):
-    return gap_minutes([m for s in sections for m in s["meetings"]])
+def gap_cost(sections, preferred_gap=0):
+    all_meetings = [m for s in sections for m in s["meetings"]]
+    if not preferred_gap:
+        return gap_minutes(all_meetings)
+    # compute the total gap cost for the given preferred gap
+    by_day = {}
+    for day, start, end in all_meetings:
+        by_day.setdefault(day, []).append((start, end))
+    cost = 0.0
+    for intervals in by_day.values():
+        intervals.sort()
+        last_end = intervals[0][1]
+        for start, end in intervals[1:]:
+            cost += abs(max(0, start - last_end) - preferred_gap)
+            last_end = max(last_end, end)
+    return cost
 
 def blocked_cost(sections):
     return len(set().union(*(s["blocked"] for s in sections)))
@@ -46,7 +60,7 @@ def setup_a_star_inputs(program, specialization, year, semester, blocked):
     opt_codes = []
     for c in spec + elec + ge:
         code = c["course_code"]
-        if code not in req_codes and code not in opt_codes and options.get(code) and course_units.get(code, 0) > 0 and not code.startswith("HK "):
+        if code not in req_codes and code not in opt_codes and options.get(code) and course_units.get(code, 0) > 0 and not is_non_academic_course(code):
             opt_codes.append(code)
 
     return options, course_units, req_codes, opt_codes
@@ -61,12 +75,13 @@ def print_a_star_results(schedule, course_units, fitness, academic_units, nodes)
     for section in sorted(schedule, key=lambda s: s["course_code"]):
         code = section["course_code"]
         units_label = str(course_units.get(code, 0))
-        if code.startswith("HK "):
+        if is_non_academic_course(code):
             units_label += " (hk)"
         print(f"{code:<14} {section['section']:<10} {units_label:<7} {section['time_slot']}")
 
-def a_star(program, specialization, year, semester, blocked_times=()):
+def a_star(program, specialization, year, semester, blocked_times=(), preferred_gap=0):
     print("solving timetable...")
+    preferred_gap = preferred_gap or 0
     blocked = [(day, to_minutes(start), to_minutes(end)) for day, start, end in blocked_times]
     options, course_units, req_codes, opt_codes = setup_a_star_inputs(program, specialization, year, semester, blocked)
 
@@ -79,7 +94,7 @@ def a_star(program, specialization, year, semester, blocked_times=()):
         print(f"error: required courses have no sections: {', '.join(missing)}")
         return []
 
-    req_units = sum(course_units.get(c, 0) for c in req_codes if not c.startswith("HK "))
+    req_units = sum(course_units.get(c, 0) for c in req_codes if not is_non_academic_course(c))
     if req_units > MAX_UNITS:
         print(f"error: required courses total {req_units} units, exceeding the {MAX_UNITS}-unit cap.")
         return []
@@ -93,7 +108,7 @@ def a_star(program, specialization, year, semester, blocked_times=()):
     reach = [0] * (len(codes) + 1)
     reach[len(codes)] = 1
     for i in range(len(codes) - 1, -1, -1):
-        u = 0 if codes[i].startswith("HK ") else course_units.get(codes[i], 0)
+        u = 0 if is_non_academic_course(codes[i]) else course_units.get(codes[i], 0)
         taken = (reach[i + 1] << u) & full
         reach[i] = taken if i < n_req else (reach[i + 1] | taken)
 
@@ -101,13 +116,16 @@ def a_star(program, specialization, year, semester, blocked_times=()):
         totals = (reach[next_depth] << units) & full
         return None if totals == 0 else MAX_UNITS - (totals.bit_length() - 1)
 
-    #classes added later can fill at most their own minutes of the current gaps
+    #classes added later can reduce gap_cost by at most sum(e - s + preferred_gap) per course (keeps h(n) admissible)
     rest_minutes = [0] * (len(codes) + 1)
     for i in range(len(codes) - 1, -1, -1):
-        rest_minutes[i] = rest_minutes[i + 1] + max(sum(e - s for _, s, e in sec["meetings"]) for sec in options[codes[i]])
+        rest_minutes[i] = rest_minutes[i + 1] + max(
+            (sum(e - s + preferred_gap for _, s, e in sec["meetings"]) for sec in options.get(codes[i], [])),
+            default=0,
+        )
 
     def soft_cost(chosen, depth):
-        gap = gap_cost(chosen)
+        gap = gap_cost(chosen, preferred_gap)
         return SOFT_CONSTRAINT_WEIGHT * max(0, gap - rest_minutes[depth]) + blocked_cost(chosen), gap
 
     def show(chosen, units):
@@ -116,7 +134,10 @@ def a_star(program, specialization, year, semester, blocked_times=()):
             print("no valid schedule found in this run.")
             return []
 
-        print_a_star_results(chosen, course_units, fitness_from_metrics(metrics), metrics["academic_units"], nodes)
+        fitness = fitness_from_metrics(metrics)
+        if preferred_gap:
+            fitness += SOFT_CONSTRAINT_WEIGHT * (metrics["gap_minutes"] - gap_cost(chosen, preferred_gap))
+        print_a_star_results(chosen, course_units, fitness, metrics["academic_units"], nodes)
         return list(chosen)
 
     tie = count()
@@ -131,7 +152,7 @@ def a_star(program, specialization, year, semester, blocked_times=()):
             return show(chosen, units)
 
         code = codes[depth]
-        code_units = 0 if code.startswith("HK ") else course_units.get(code, 0)
+        code_units = 0 if is_non_academic_course(code) else course_units.get(code, 0)
 
         #try assigning a section to the current course
         if units + code_units <= MAX_UNITS:
