@@ -382,8 +382,7 @@ class App(tk.Tk):
         row("Gap (hours):", ttk.Spinbox(left, textvariable=self.gap_var, from_=0, to=12,
                                         increment=0.5, width=10))
         ttk.Label(left, wraplength=400, justify="left", foreground="#555555",
-                  text="Backtracking and A* use the gap as a target between classes (0 = no preference / minimize gaps). "
-                       "Genetic Algorithm always minimizes gaps.").grid(
+                  text="").grid(
             row=next(rows), column=0, columnspan=2, sticky="w")
 
         buttons = ttk.Frame(left)

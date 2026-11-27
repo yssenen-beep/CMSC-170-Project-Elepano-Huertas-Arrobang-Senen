@@ -3,74 +3,127 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Graphs, tables, and comparisons of Backtracking, A*, and Genetic Algorithm for course scheduling.">
-  <title>Project Page | Course Scheduling</title>
+  <meta name="description" content="Comparing Backtracking, A* Search, and Genetic Algorithm for University Class Scheduling using AMIS Data.">
+  <title>CMSC 170 · Comparing Backtracking, A* Search, and Genetic Algorithm</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <main>
     <header>
-      <p class="subtitle">CMSC 170 · Course Scheduling</p>
-      <h1>Project Page</h1>
-      <p>Graphs, tables, and comparisons of Backtracking, A*, and Genetic Algorithm.</p>
+      <p class="subtitle">CMSC 170: Introduction to Artificial Intelligence · University of the Philippines Los Baños (CEAT)</p>
+      <h1>Comparing Backtracking, A* Search, and Genetic Algorithm for University Class Scheduling using AMIS Data</h1>
+      <p class="authors">Raybel Ann Arrobang · Joshua B. Elepaño · Vijay Nikolai N. Huertas · Yvan Luis S. Senen</p>
+      <p>An empirical benchmark evaluating constraint satisfaction and heuristic/evolutionary optimization on real UPLB CEAT course offerings (A.Y. 2025–2026 2nd Semester &amp; A.Y. 2026–2027 1st Semester).</p>
+      <nav class="page-nav" aria-label="Page sections">
+        <a href="#overview-heading">Overview &amp; Dataset</a>
+        <a href="#graphs-heading">Benchmark Graphs</a>
+        <a href="#results-heading">Results Table</a>
+        <a href="#schedule-heading">Interactive Timetable</a>
+        <a href="#comparison-heading">Algorithm Formulations</a>
+        <a href="#limitations-heading">Scope &amp; Limitations</a>
+      </nav>
     </header>
-    <p id="load-status" role="status">Loading results…</p>
-    <noscript><p>Enable JavaScript to view graphs, or <a href="data/results.csv">open the results CSV</a>.</p></noscript>
+
+    <section aria-labelledby="overview-heading" class="overview-grid">
+      <article>
+        <h2 id="overview-heading">Problem &amp; Motivation</h2>
+        <p>Constructing a conflict-free weekly class schedule requires satisfying degree curriculum requirements, staying within the <strong>21-unit academic cap</strong> (and 5-unit HK/NSTP cap), avoiding overlapping sections, and respecting student time preferences such as blocked vacant hours and desired inter-class gaps.</p>
+        <p>This study benchmarks three classical AI paradigms—<strong>Backtracking</strong>, <strong>A* Search</strong>, and a <strong>Genetic Algorithm</strong>—across runtime, schedule validity, and preference satisfaction.</p>
+      </article>
+      <article>
+        <h2>AMIS Data Pipeline</h2>
+        <ul class="clean-list">
+          <li><strong>1. Formatting:</strong> Parsed raw single-line JSON dumps (<code>first_semester.json</code>, <code>second_semester.json</code>, <code>plan_of_study.json</code>) into structured CSV tables.</li>
+          <li><strong>2. Cleaning:</strong> Stripped non-CSP metadata (enrollment counts, instructors) to retain course codes, sections, units, and meeting slots.</li>
+          <li><strong>3. Filtering:</strong> Scoped curricula and schedules to UPLB College of Engineering and Agro-Industrial Technology (CEAT) programs.</li>
+          <li><strong>4. Simplifying:</strong> Deduplicated identical course sections sharing the same time slot under the relaxed unit-scarcity assumption.</li>
+        </ul>
+      </article>
+    </section>
+
+    <p id="load-status" role="status">Loading benchmark results…</p>
+    <noscript><p>Enable JavaScript to view interactive graphs, or <a href="data/results.csv">download the results CSV</a>.</p></noscript>
+
     <div id="results-content" hidden>
       <div class="controls">
-        <label for="scenario">Test scenario</label>
+        <label for="scenario">Test Scenario</label>
         <select id="scenario"></select>
         <p id="case-note"></p>
       </div>
+
       <section aria-labelledby="graphs-heading">
-        <h2 id="graphs-heading">Graphs</h2>
+        <h2 id="graphs-heading">Benchmark Graphs</h2>
         <div class="chart-grid">
-          <article><h3>Runtime</h3><p>Median seconds · lower is better</p><div id="runtime-chart"></div></article>
-          <article><h3>Fitness</h3><p>Common score · higher is better</p><div id="fitness-chart"></div></article>
-          <article><h3>Gaps between classes</h3><p>Median minutes · lower is better</p><div id="gap-chart"></div></article>
-          <article><h3>Valid schedules</h3><p>Percentage of runs · higher is better</p><div id="valid-chart"></div></article>
-          <article id="gap-error-card" hidden><h3>Distance from target gap</h3><p>Mean absolute error in minutes · lower is better</p><div id="gap-error-chart"></div></article>
+          <article><h3>Runtime</h3><p>Median wall-clock seconds · lower is better</p><div id="runtime-chart"></div></article>
+          <article><h3>Shared Fitness Score</h3><p>Common evaluation metric · higher is better</p><div id="fitness-chart"></div></article>
+          <article><h3>Total Idle Time (Gaps)</h3><p>Median same-day gap minutes · lower is better</p><div id="gap-chart"></div></article>
+          <article><h3>Valid Schedules</h3><p>Percentage of conflict-free, valid runs · higher is better</p><div id="valid-chart"></div></article>
+          <article id="gap-error-card" hidden><h3>Distance from Target Gap</h3><p>Mean absolute error in minutes · lower is better</p><div id="gap-error-chart"></div></article>
         </div>
       </section>
+
       <section aria-labelledby="results-heading">
-        <h2 id="results-heading">Results table</h2>
+        <h2 id="results-heading">Experimental Results Table</h2>
         <div class="table-scroll"><table>
           <caption id="summary-caption">Results for the selected scenario</caption>
-          <thead><tr><th scope="col">Method</th><th scope="col">Valid / runs</th><th scope="col">Runtime (s)</th><th scope="col">Fitness</th><th scope="col">Academic units</th><th scope="col">Total gaps (min)</th><th scope="col">Average gap (min)</th><th scope="col">Target error (min)</th><th scope="col">Blocked hits</th><th scope="col">Timeouts</th></tr></thead>
+          <thead><tr><th scope="col">Method</th><th scope="col">Valid / runs</th><th scope="col">Runtime (s)</th><th scope="col">Fitness</th><th scope="col">Academic units</th><th scope="col">Nodes expanded</th><th scope="col">Total gaps (min)</th><th scope="col">Average gap (min)</th><th scope="col">Target error (min)</th><th scope="col">Blocked hits</th><th scope="col">Timeouts</th></tr></thead>
           <tbody id="summary-body"></tbody>
         </table></div>
-        <p class="note">Values are medians. Quality metrics use valid outputs only; runtime includes all attempts. A dash means no applicable measurement. Timeout runtimes are capped at the time limit.</p>
-        <p class="note">Average gap and target error use consecutive classes on the same day, including back-to-back classes (zero gap). Target error is the average absolute difference from the requested gap; a dash means no target or no adjacent classes.</p>
+        <p class="note">Values report medians across repeated runs. Quality metrics aggregate valid schedules only; runtime includes all attempts (capped at 60 s on timeout). A dash (—) indicates no applicable measurement.</p>
+        <p class="note"><strong>Shared Evaluation Metric:</strong> <code>Fitness = Academic_Units − 1000 × (Conflicts + Excess_Units + Missing_Required) − 0.01 × Gap_Minutes − Blocked_Blocks_Used</code>.</p>
         <p id="finding-text" class="finding"></p>
       </section>
+
       <section aria-labelledby="schedule-heading">
-        <h2 id="schedule-heading">Resulting schedule</h2>
+        <h2 id="schedule-heading">Generated Weekly Timetable</h2>
         <div class="schedule-controls">
           <label for="schedule-method">Method<select id="schedule-method"><option>Backtracking</option><option>A*</option><option>Genetic Algorithm</option></select></label>
-          <label for="schedule-seed">Run / seed<select id="schedule-seed"></select></label>
+          <label for="schedule-seed">Run / Seed<select id="schedule-seed"></select></label>
         </div>
         <p id="schedule-summary" role="status"></p>
-        <p class="note">Colored blocks are classes. Gray cells are unavailable hours; red outlines mark classes overlapping those hours. Empty cells show free time.</p>
+        <p class="note">Colored blocks represent scheduled classes. Gray shaded cells indicate preferred vacant hours; red borders highlight classes overlapping unavailable slots.</p>
         <div id="schedule-grid" class="timetable-scroll"></div>
-        <details><summary>Course list</summary><div class="table-scroll"><table>
-          <thead><tr><th scope="col">Course</th><th scope="col">Section</th><th scope="col">Meeting times</th></tr></thead>
+        <details><summary>View Course &amp; Section Breakdown</summary><div class="table-scroll"><table>
+          <thead><tr><th scope="col">Course</th><th scope="col">Section</th><th scope="col">Units</th><th scope="col">Meeting times</th></tr></thead>
           <tbody id="schedule-body"></tbody>
         </table></div></details>
       </section>
+
       <section aria-labelledby="comparison-heading">
-        <h2 id="comparison-heading">Method comparison</h2>
+        <h2 id="comparison-heading">Algorithm Formulations &amp; Hyperparameters</h2>
         <div class="table-scroll"><table class="comparison">
-          <thead><tr><th scope="col">Method</th><th scope="col">Approach</th><th scope="col">Courses considered</th><th scope="col">Search limit</th></tr></thead>
+          <thead><tr><th scope="col">Method</th><th scope="col">Search &amp; Optimization Mechanism</th><th scope="col">Preference Handling</th><th scope="col">Hyperparameters / Budget</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Backtracking</th><td>Tries section assignments recursively; stops at a feasible schedule when no preferences are set.</td><td>Courses listed for the selected term</td><td id="bt-budget"></td></tr>
-            <tr><th scope="row">A*</th><td>Prioritizes partial schedules using unit and scheduling costs.</td><td>Required courses and broader optional pools</td><td id="astar-budget"></td></tr>
-            <tr><th scope="row">Genetic Algorithm</th><td>Evolves schedules through selection, crossover, and mutation.</td><td>Required courses and broader optional pools</td><td id="ga-budget"></td></tr>
+            <tr>
+              <th scope="row">Backtracking</th>
+              <td>Recursive depth-first CSP search ordering required courses first, then optional specialization/elective/GE pools by fewest available sections (MRV heuristic), with unit-reachability pruning.</td>
+              <td>Scores candidates on a 0–100 preference scale combining vacant-time avoidance and target-gap tolerance; stops early when max reachable units and 100% preference score are met.</td>
+              <td id="bt-budget"></td>
+            </tr>
+            <tr>
+              <th scope="row">A* Search</th>
+              <td>Best-first search minimizing <code>f(n) = g(n) + h(n)</code>, where <code>g(n)</code> penalizes gap cost (<code>0.01/min</code>) and blocked slots (<code>+1</code> per slot) and <code>h(n)</code> is the admissible remaining academic unit shortfall to 21 units.</td>
+              <td>Supports both minimum-gap mode (<code>preferred_gap = 0</code>) and target-gap deviation minimization alongside soft vacant-block penalties.</td>
+              <td id="astar-budget"></td>
+            </tr>
+            <tr>
+              <th scope="row">Genetic Algorithm</th>
+              <td>Evolves chromosomes mapping courses to sections using elitism (top 1 carried over), 3-way tournament selection, uniform random crossover, and random section/drop mutation.</td>
+              <td>Optimizes the shared fitness function directly (penalizing conflicts, excess/missing units, total gap minutes, and blocked slots).</td> <td id="ga-budget"></td> </tr>
           </tbody>
         </table></div>
         <p class="note" id="study-note"></p>
-        <p class="note">Like the desktop UI, Backtracking uses the requested gap as a target; A* and GA always minimize gaps. Common fitness still penalizes total idle time, so use target error to compare how closely the schedules match a requested gap.</p>
-        <p class="note">All outputs use the same fitness evaluator. Search spaces and stopping rules differ, so these results compare the current implementations on the selected test scenarios.</p>
+      </section>
+
+      <section aria-labelledby="limitations-heading">
+        <h2 id="limitations-heading">Scope &amp; Limitations</h2>
+        <ul class="clean-list">
+          <li><strong>Single-College Scope:</strong> All datasets and evaluations are restricted to undergraduate degree programs under the College of Engineering and Agro-Industrial Technology (CEAT) at UPLB.</li>
+          <li><strong>Exclusion of Faculty Preferences:</strong> Schedules are optimized solely on curriculum requirements, unit caps, and time preferences without accounting for student preferences for specific Faculty-in-Charge (FIC).</li>
+          <li><strong>Assumption of Unlimited Class Capacity:</strong> The simulation omits real-time slot scarcity, section caps, and enlistment competition, assuming a student can enroll in any selected section.</li>
+          <li><strong>No Fixed-Subject Anchoring:</strong> Schedules are generated from scratch for the selected term without allowing users to lock in pre-selected sections or mandatory break blocks prior to search.</li>
+        </ul>
       </section>
     </div>
   </main>

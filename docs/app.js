@@ -12,10 +12,11 @@ function renderSchedule() {
   if (!run || !run.valid) {
     $('schedule-summary').textContent = run ? `${run.method} · Seed ${run.seed} · ${run.message || 'No valid schedule returned.'}` : 'No measured run available.';
     $('schedule-grid').innerHTML = '';
-    $('schedule-body').innerHTML = '<tr><td colspan="3">No valid schedule available for this run.</td></tr>';
+    $('schedule-body').innerHTML = '<tr><td colspan="4">No valid schedule available for this run.</td></tr>';
     return;
   }
-  $('schedule-summary').textContent = `${run.method} · Seed ${run.seed} · ${number(run.runtime_sec, 3)} s · ${number(run.academic_units, 0)} academic units · Fitness ${number(run.fitness)} · Total gaps ${run.gap_minutes} min · Average gap ${number(run.average_gap, 1)} min${caseInfo.gap_minutes ? ` · Target ${caseInfo.gap_minutes} min · Target error ${number(run.gap_target_error, 1)} min` : ''}`;
+  const nodesText = run.nodes != null ? ` · ${Number(run.nodes).toLocaleString()} nodes` : '';
+  $('schedule-summary').textContent = `${run.method} · Seed ${run.seed} · ${number(run.runtime_sec, 3)} s${nodesText} · ${number(run.academic_units, 0)} academic units · Fitness ${number(run.fitness)} · Total gaps ${run.gap_minutes} min · Average gap ${number(run.average_gap, 1)} min${caseInfo.gap_minutes ? ` · Target ${caseInfo.gap_minutes} min · Target error ${number(run.gap_target_error, 1)} min` : ''}`;
   const days = ['M','T','W','Th','F','S'];
   const labels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const palette = ['#cfe8ff','#ffd9b3','#d9f2d0','#f9d1e6','#e6dcff','#fff3b0','#c8f1ee','#ffd0d0','#e3e3e3','#d5e8c8'];
@@ -43,7 +44,10 @@ function renderSchedule() {
     });
   });
   $('schedule-grid').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1010 758" role="img" aria-labelledby="timetable-title timetable-description" style="font-family:Segoe UI,Arial,sans-serif"><title id="timetable-title">${escapeHTML(run.method)} weekly timetable, seed ${run.seed}</title><desc id="timetable-description">Monday to Saturday, 07:00 to 19:00, in 30-minute slots. Classes are colored; unavailable hours are gray. Full meeting details appear in the course list below.</desc>${drawing}</svg>`;
-  $('schedule-body').innerHTML = run.schedule.map(section => `<tr><th scope="row">${escapeHTML(section.course_code)}</th><td>${escapeHTML(section.section)}</td><td>${section.meetings.map(([day,begin,end]) => `${day} ${clock(begin)}–${clock(end)}`).join('; ') || 'No fixed time'}</td></tr>`).join('');
+  $('schedule-body').innerHTML = run.schedule.map(section => {
+    const unitLabel = section.units != null ? `${section.units}${section.hk ? ' (HK)' : ''}` : '—';
+    return `<tr><th scope="row">${escapeHTML(section.course_code)}</th><td>${escapeHTML(section.section)}</td><td>${escapeHTML(unitLabel)}</td><td>${section.meetings.map(([day,begin,end]) => `${day} ${clock(begin)}–${clock(end)}`).join('; ') || 'No fixed time'}</td></tr>`;
+  }).join('');
 }
 
 function drawChart(id, rows, metric, title, suffix, digits) {
@@ -67,9 +71,9 @@ function drawChart(id, rows, metric, title, suffix, digits) {
 function renderScenario() {
   const caseInfo = benchmark.cases.find(c => c.id === $('scenario').value);
   const rows = benchmark.summary.filter(row => row.case === caseInfo.id);
-  $('case-note').textContent = `${caseInfo.specialization} specialization · ${caseInfo.year} · ${caseInfo.semester} · ${caseInfo.blocked.length ? 'M/W/F 08:00–10:00 unavailable' : 'No unavailable hours'} · ${caseInfo.gap_minutes ? `Target gap: ${caseInfo.gap_minutes} min (Backtracking)` : 'No target gap'}`;
+  $('case-note').textContent = `${caseInfo.program} (${caseInfo.specialization}) · ${caseInfo.year} · ${caseInfo.semester} · ${caseInfo.blocked.length ? 'M/W/F 08:00–10:00 unavailable' : 'No unavailable hours'} · ${caseInfo.gap_minutes ? `Target gap: ${caseInfo.gap_minutes} min (Backtracking & A*)` : 'No target gap (minimize idle time)'}`;
   $('summary-caption').textContent = caseInfo.label + ' — medians across repeated runs';
-  $('summary-body').innerHTML = rows.map(row => `<tr><th scope="row">${escapeHTML(row.method)}</th><td>${row.valid_runs} / ${row.runs}</td><td>${number(row.median_runtime, 4)}</td><td>${number(row.fitness)}</td><td>${number(row.academic_units, 0)}</td><td>${number(row.gap_minutes, 0)}</td><td>${number(row.average_gap, 1)}</td><td>${number(row.gap_target_error, 1)}</td><td>${number(row.blocked_count, 0)}</td><td>${row.timeouts}</td></tr>`).join('');
+  $('summary-body').innerHTML = rows.map(row => `<tr><th scope="row">${escapeHTML(row.method)}</th><td>${row.valid_runs} / ${row.runs}</td><td>${number(row.median_runtime, 4)}</td><td>${number(row.fitness)}</td><td>${number(row.academic_units, 0)}</td><td>${row.nodes != null ? Number(row.nodes).toLocaleString() : '—'}</td><td>${number(row.gap_minutes, 0)}</td><td>${number(row.average_gap, 1)}</td><td>${number(row.gap_target_error, 1)}</td><td>${number(row.blocked_count, 0)}</td><td>${row.timeouts}</td></tr>`).join('');
   drawChart('runtime-chart', rows, 'median_runtime', `Runtime: ${caseInfo.label}`, ' s', 4);
   drawChart('fitness-chart', rows, 'fitness', `Fitness: ${caseInfo.label}`, '', 2);
   drawChart('gap-chart', rows, 'gap_minutes', `Idle time: ${caseInfo.label}`, ' min', 0);
@@ -91,11 +95,11 @@ async function init() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     benchmark = await response.json();
     const config = benchmark.config;
-    $('bt-budget').textContent = `${config.node_limit.toLocaleString()} nodes`;
-    $('astar-budget').textContent = `${config.node_limit.toLocaleString()} nodes`;
-    $('ga-budget').textContent = `${config.generations.toLocaleString()} generations · ${config.population} individuals · ${config.mutation_rate} mutation rate`;
+    $('bt-budget').textContent = `${config.node_limit.toLocaleString()} nodes max`;
+    $('astar-budget').textContent = `${config.node_limit.toLocaleString()} nodes max`;
+    $('ga-budget').textContent = `${config.generations.toLocaleString()} generations · ${config.population} individuals · ${(config.mutation_rate * 100).toFixed(0)}% mutation rate`;
     $('scenario').innerHTML = benchmark.cases.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.label)}</option>`).join('');
-    $('study-note').textContent = `${benchmark.runs.length} measured runs · ${config.repeats} runs per method per scenario · ${config.timeout_sec}-second time limit per run.`;
+    $('study-note').textContent = `${benchmark.runs.length} total runs · ${config.repeats} seeds per method per scenario · ${config.timeout_sec}-second wall-clock cap per run.`;
     $('scenario').addEventListener('change', renderScenario);
     $('schedule-seed').innerHTML = Array.from({length:config.repeats}, (_, seed) => `<option value="${seed}">Seed ${seed}</option>`).join('');
     $('schedule-method').addEventListener('change', renderSchedule);
@@ -104,7 +108,7 @@ async function init() {
     $('results-content').hidden = false;
     $('load-status').hidden = true;
   } catch (error) {
-    $('load-status').textContent = 'Results could not be loaded. Open this page through a web server (see README), or download the CSV directly. ' + error.message;
+    $('load-status').textContent = 'Results could not be loaded. Open this page through a local HTTP server (see README), or download the CSV directly. ' + error.message;
   }
 }
 init();
