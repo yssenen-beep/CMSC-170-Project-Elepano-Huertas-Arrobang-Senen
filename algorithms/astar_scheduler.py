@@ -116,17 +116,35 @@ def a_star(program, specialization, year, semester, blocked_times=(), preferred_
         totals = (reach[next_depth] << units) & full
         return None if totals == 0 else MAX_UNITS - (totals.bit_length() - 1)
 
-    #classes added later can reduce gap_cost by at most sum(e - s + preferred_gap) per course (keeps h(n) admissible)
-    rest_minutes = [0] * (len(codes) + 1)
+    #classes added later on day d can reduce day d's gap_cost by at most sum(e - s + preferred_gap) (keeps h(n) admissible)
+    days = ("M", "T", "W", "Th", "F", "S", "Su")
+    rest_day = [{d: 0 for d in days} for _ in range(len(codes) + 1)]
     for i in range(len(codes) - 1, -1, -1):
-        rest_minutes[i] = rest_minutes[i + 1] + max(
-            (sum(e - s + preferred_gap for _, s, e in sec["meetings"]) for sec in options.get(codes[i], [])),
-            default=0,
-        )
+        for d in days:
+            rest_day[i][d] = rest_day[i + 1][d] + max(
+                (sum(e - s + preferred_gap for md, s, e in sec["meetings"] if md == d)
+                 for sec in options.get(codes[i], [])),
+                default=0,
+            )
 
     def soft_cost(chosen, depth):
-        gap = gap_cost(chosen, preferred_gap)
-        return SOFT_CONSTRAINT_WEIGHT * max(0, gap - rest_minutes[depth]) + blocked_cost(chosen), gap
+        by_day = {}
+        for s in chosen:
+            for d, start, end in s["meetings"]:
+                by_day.setdefault(d, []).append((start, end))
+        lb_gap = 0.0
+        raw_gap = 0.0
+        for d, intervals in by_day.items():
+            intervals.sort()
+            last_end = intervals[0][1]
+            d_cost = 0.0
+            for start, end in intervals[1:]:
+                brk = max(0, start - last_end)
+                d_cost += abs(brk - preferred_gap) if preferred_gap else brk
+                last_end = max(last_end, end)
+            raw_gap += d_cost
+            lb_gap += max(0.0, d_cost - rest_day[depth].get(d, 0))
+        return SOFT_CONSTRAINT_WEIGHT * lb_gap + blocked_cost(chosen), raw_gap
 
     def show(chosen, units):
         metrics = evaluate_schedule(chosen, course_units, req_codes, blocked)
